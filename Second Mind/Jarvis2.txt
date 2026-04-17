@@ -1,0 +1,28 @@
+<context>
+Estamos iniciando a construção do meu Obsidian Vault do zero. Vamos organizar minha Segunda Mente utilizando o método P.A.R.A., com algumas adições para notas diárias e automações.
+</context>
+
+<task>
+Sua tarefa é atuar diretamente no sistema de arquivos para criar a estrutura base de pastas e o arquivo principal (Dashboard) do meu cofre. 
+</task>
+
+<directory_structure>
+Crie exatamente as seguintes pastas na raiz do meu cofre:
+- 1-Projetos (Para coisas com começo, meio e fim. Ex: "Lançar site", "Comprar carro")
+- 2-Areas (Para responsabilidades contínuas. Ex: "Saúde", "Finanças", "Trabalho")
+- 3-Recursos (Para interesses e referências. Ex: "Design", "Receitas", "Livros")
+- 4-Arquivo (Para tudo que foi concluído ou pausado)
+- 5-Diario (Para notas rápidas do dia a dia e reuniões)
+- 6-Templates (Para os modelos YAML e estruturas de notas)
+</directory_structure>
+
+<dashboard_creation>
+Na raiz do cofre, crie um arquivo chamado `000 - Home.md`.
+Este arquivo será meu painel de controle. Escreva nele um cabeçalho de boas-vindas e crie uma lista organizada usando wikilinks (ex: `[[1-Projetos]]`) apontando para as áreas principais que você acabou de criar. Adicione uma breve e elegante explicação de uma linha abaixo de cada link sobre o que vai ali dentro.
+</dashboard_creation>
+
+<execution_rules>
+- Use suas ferramentas (tool calls) para criar os diretórios e o arquivo `000 - Home.md` DIRETAMENTE no meu computador. 
+- Não escreva um tutorial de como eu devo criar as pastas. Faça o trabalho por mim.
+- Assim que finalizar a criação, responda confirmando o sucesso da operação e peça para eu listar meus Projetos ou Áreas de responsabilidade atuais para começarmos a criar as notas.
+</execution_rules>
