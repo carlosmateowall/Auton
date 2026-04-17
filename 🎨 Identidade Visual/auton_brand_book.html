@@ -1,0 +1,280 @@
+
+<style>
+  * { box-sizing: border-box; }
+  .section { margin-bottom: 2.5rem; }
+  .section-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 1rem; }
+  .row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .logo-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; flex: 1; min-width: 160px; }
+  .logo-display { padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 110px; }
+  .logo-meta { padding: 10px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .logo-meta-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .logo-meta-desc { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+  .swatch-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatch-item { flex: 1; min-width: 80px; }
+  .swatch-block { height: 56px; border-radius: var(--border-radius-md); margin-bottom: 8px; }
+  .swatch-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .swatch-hex { font-size: 11px; color: var(--color-text-tertiary); }
+
+  .type-row { display: flex; flex-direction: column; gap: 12px; }
+  .type-item { display: flex; align-items: baseline; gap: 16px; padding-bottom: 12px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .type-label { font-size: 11px; color: var(--color-text-tertiary); min-width: 90px; }
+  .type-sample { color: var(--color-text-primary); }
+
+  .mockup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mockup-frame { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 16px; display: flex; align-items: center; justify-content: center; min-height: 140px; }
+  @media (max-width: 500px) { .mockup-grid { grid-template-columns: 1fr; } .row { flex-direction: column; } }
+</style>
+
+<h2 class="sr-only">Brand book completo da Auton — logos, cores, tipografia e aplicações</h2>
+
+<div class="section">
+  <div class="section-label">Variações do logo</div>
+  <div class="row">
+
+    <div class="logo-card">
+      <div class="logo-display" style="background:#1C1028;">
+        <svg width="130" height="40" viewBox="0 0 130 40">
+          <rect x="2" y="2" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <rect x="20" y="2" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="2" y="20" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="20" y="20" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <line x1="16" y1="9" x2="20" y2="9" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="9" y1="16" x2="9" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="27" y1="16" x2="27" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="16" y1="27" x2="20" y2="27" stroke="#9B7FE8" stroke-width="1.5"/>
+          <text x="44" y="24" font-size="22" font-weight="500" fill="#ffffff" font-family="sans-serif" letter-spacing="-0.5">Auton</text>
+        </svg>
+      </div>
+      <div class="logo-meta">
+        <div class="logo-meta-name">Versão escura</div>
+        <div class="logo-meta-desc">Fundo roxo escuro — uso principal</div>
+      </div>
+    </div>
+
+    <div class="logo-card">
+      <div class="logo-display" style="background:#F5F3FF;">
+        <svg width="130" height="40" viewBox="0 0 130 40">
+          <rect x="2" y="2" width="14" height="14" rx="3" fill="#534AB7"/>
+          <rect x="20" y="2" width="14" height="14" rx="3" fill="#534AB7" opacity="0.35"/>
+          <rect x="2" y="20" width="14" height="14" rx="3" fill="#534AB7" opacity="0.35"/>
+          <rect x="20" y="20" width="14" height="14" rx="3" fill="#534AB7"/>
+          <line x1="16" y1="9" x2="20" y2="9" stroke="#534AB7" stroke-width="1.5"/>
+          <line x1="9" y1="16" x2="9" y2="20" stroke="#534AB7" stroke-width="1.5"/>
+          <line x1="27" y1="16" x2="27" y2="20" stroke="#534AB7" stroke-width="1.5"/>
+          <line x1="16" y1="27" x2="20" y2="27" stroke="#534AB7" stroke-width="1.5"/>
+          <text x="44" y="24" font-size="22" font-weight="500" fill="#26215C" font-family="sans-serif" letter-spacing="-0.5">Auton</text>
+        </svg>
+      </div>
+      <div class="logo-meta">
+        <div class="logo-meta-name">Versão clara</div>
+        <div class="logo-meta-desc">Fundo lilás suave — apresentações</div>
+      </div>
+    </div>
+
+    <div class="logo-card">
+      <div class="logo-display" style="background:#ffffff; border: 0.5px solid #eee;">
+        <svg width="130" height="40" viewBox="0 0 130 40">
+          <rect x="2" y="2" width="14" height="14" rx="3" fill="#7F77DD"/>
+          <rect x="20" y="2" width="14" height="14" rx="3" fill="#7F77DD" opacity="0.35"/>
+          <rect x="2" y="20" width="14" height="14" rx="3" fill="#7F77DD" opacity="0.35"/>
+          <rect x="20" y="20" width="14" height="14" rx="3" fill="#7F77DD"/>
+          <line x1="16" y1="9" x2="20" y2="9" stroke="#7F77DD" stroke-width="1.5"/>
+          <line x1="9" y1="16" x2="9" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+          <line x1="27" y1="16" x2="27" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+          <line x1="16" y1="27" x2="20" y2="27" stroke="#7F77DD" stroke-width="1.5"/>
+          <text x="44" y="24" font-size="22" font-weight="500" fill="#3C3489" font-family="sans-serif" letter-spacing="-0.5">Auton</text>
+        </svg>
+      </div>
+      <div class="logo-meta">
+        <div class="logo-meta-name">Versão branca</div>
+        <div class="logo-meta-desc">Fundo branco — documentos e e-mail</div>
+      </div>
+    </div>
+
+    <div class="logo-card">
+      <div class="logo-display" style="background:#1C1028;">
+        <svg width="44" height="44" viewBox="0 0 36 36">
+          <rect x="4" y="4" width="12" height="12" rx="3" fill="#9B7FE8"/>
+          <rect x="20" y="4" width="12" height="12" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="4" y="20" width="12" height="12" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="20" y="20" width="12" height="12" rx="3" fill="#9B7FE8"/>
+          <line x1="16" y1="10" x2="20" y2="10" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="10" y1="16" x2="10" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="26" y1="16" x2="26" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="16" y1="26" x2="20" y2="26" stroke="#9B7FE8" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="logo-meta">
+        <div class="logo-meta-name">Ícone isolado</div>
+        <div class="logo-meta-desc">Favicon, avatar, app icon</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Paleta de cores</div>
+  <div class="swatch-row">
+    <div class="swatch-item">
+      <div class="swatch-block" style="background:#1C1028;"></div>
+      <div class="swatch-name">Noite</div>
+      <div class="swatch-hex">#1C1028</div>
+    </div>
+    <div class="swatch-item">
+      <div class="swatch-block" style="background:#7F77DD;"></div>
+      <div class="swatch-name">Roxo principal</div>
+      <div class="swatch-hex">#7F77DD</div>
+    </div>
+    <div class="swatch-item">
+      <div class="swatch-block" style="background:#9B7FE8;"></div>
+      <div class="swatch-name">Roxo vibrant</div>
+      <div class="swatch-hex">#9B7FE8</div>
+    </div>
+    <div class="swatch-item">
+      <div class="swatch-block" style="background:#CECBF6;"></div>
+      <div class="swatch-name">Lilás</div>
+      <div class="swatch-hex">#CECBF6</div>
+    </div>
+    <div class="swatch-item">
+      <div class="swatch-block" style="background:#EEEDFE; border: 0.5px solid #CECBF6;"></div>
+      <div class="swatch-name">Névoa</div>
+      <div class="swatch-hex">#EEEDFE</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Tipografia</div>
+  <div class="type-row">
+    <div class="type-item">
+      <div class="type-label">Display / H1</div>
+      <div class="type-sample" style="font-size:28px; font-weight:500; letter-spacing:-0.5px; color: var(--color-text-primary);">Automate everything.</div>
+    </div>
+    <div class="type-item">
+      <div class="type-label">H2 / Título</div>
+      <div class="type-sample" style="font-size:18px; font-weight:500; color: var(--color-text-primary);">Soluções para o seu negócio</div>
+    </div>
+    <div class="type-item">
+      <div class="type-label">Corpo / Body</div>
+      <div class="type-sample" style="font-size:15px; font-weight:400; line-height:1.6; color: var(--color-text-secondary);">Automatizamos processos repetitivos para que sua equipe foque no que realmente importa.</div>
+    </div>
+    <div class="type-item">
+      <div class="type-label">Label / Badge</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:11px; letter-spacing:1.2px; text-transform:uppercase; background:#EEEDFE; color:#3C3489; padding:4px 12px; border-radius:20px; font-weight:500;">Process & Flow</span>
+        <span style="font-size:11px; letter-spacing:1.2px; text-transform:uppercase; background:#1C1028; color:#CECBF6; padding:4px 12px; border-radius:20px; font-weight:500;">Auton</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Aplicações</div>
+  <div class="mockup-grid">
+
+    <div class="mockup-frame" style="flex-direction:column; align-items:flex-start; padding:20px;">
+      <div style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--color-text-tertiary); margin-bottom:8px;">Cartão de visita</div>
+      <div style="background:#1C1028; border-radius:10px; padding:18px 20px; width:100%; min-height:90px; display:flex; flex-direction:column; justify-content:space-between;">
+        <svg width="80" height="22" viewBox="0 0 130 40">
+          <rect x="2" y="2" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <rect x="20" y="2" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="2" y="20" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="20" y="20" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <line x1="16" y1="9" x2="20" y2="9" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="9" y1="16" x2="9" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="27" y1="16" x2="27" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="16" y1="27" x2="20" y2="27" stroke="#9B7FE8" stroke-width="1.5"/>
+          <text x="44" y="24" font-size="22" font-weight="500" fill="#ffffff" font-family="sans-serif" letter-spacing="-0.5">Auton</text>
+        </svg>
+        <div style="margin-top:14px;">
+          <div style="font-size:12px; font-weight:500; color:#ffffff; margin-bottom:2px;">Lucas Ferreira</div>
+          <div style="font-size:10px; color:#9B7FE8;">lucas@auton.com.br</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-frame" style="flex-direction:column; align-items:flex-start; padding:20px;">
+      <div style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--color-text-tertiary); margin-bottom:8px;">Assinatura de e-mail</div>
+      <div style="background:var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius:10px; padding:14px 16px; width:100%;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-bottom:10px; border-bottom: 0.5px solid var(--color-border-tertiary);">
+          <div style="width:36px; height:36px; background:#EEEDFE; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 36 36">
+              <rect x="4" y="4" width="12" height="12" rx="3" fill="#7F77DD"/>
+              <rect x="20" y="4" width="12" height="12" rx="3" fill="#7F77DD" opacity="0.35"/>
+              <rect x="4" y="20" width="12" height="12" rx="3" fill="#7F77DD" opacity="0.35"/>
+              <rect x="20" y="20" width="12" height="12" rx="3" fill="#7F77DD"/>
+              <line x1="16" y1="10" x2="20" y2="10" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="10" y1="16" x2="10" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="26" y1="16" x2="26" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="16" y1="26" x2="20" y2="26" stroke="#7F77DD" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-size:13px; font-weight:500; color:var(--color-text-primary);">Lucas Ferreira</div>
+            <div style="font-size:11px; color:var(--color-text-secondary);">Sócio · Auton</div>
+          </div>
+        </div>
+        <div style="font-size:11px; color:var(--color-text-tertiary);">lucas@auton.com.br · auton.com.br</div>
+      </div>
+    </div>
+
+    <div class="mockup-frame" style="flex-direction:column; align-items:flex-start; padding:20px;">
+      <div style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--color-text-tertiary); margin-bottom:8px;">Proposta comercial — capa</div>
+      <div style="background:#1C1028; border-radius:10px; padding:20px; width:100%; min-height:110px; display:flex; flex-direction:column; justify-content:space-between;">
+        <svg width="70" height="18" viewBox="0 0 130 40">
+          <rect x="2" y="2" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <rect x="20" y="2" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="2" y="20" width="14" height="14" rx="3" fill="#9B7FE8" opacity="0.45"/>
+          <rect x="20" y="20" width="14" height="14" rx="3" fill="#9B7FE8"/>
+          <line x1="16" y1="9" x2="20" y2="9" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="9" y1="16" x2="9" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="27" y1="16" x2="27" y2="20" stroke="#9B7FE8" stroke-width="1.5"/>
+          <line x1="16" y1="27" x2="20" y2="27" stroke="#9B7FE8" stroke-width="1.5"/>
+          <text x="44" y="24" font-size="22" font-weight="500" fill="#ffffff" font-family="sans-serif" letter-spacing="-0.5">Auton</text>
+        </svg>
+        <div style="margin-top:16px;">
+          <div style="font-size:14px; font-weight:500; color:#ffffff; margin-bottom:4px;">Proposta de automação</div>
+          <div style="font-size:11px; color:#9B7FE8; letter-spacing:0.5px;">Empresa XYZ · Abril 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-frame" style="flex-direction:column; align-items:flex-start; padding:20px;">
+      <div style="font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--color-text-tertiary); margin-bottom:8px;">Perfil LinkedIn / redes</div>
+      <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:10px; overflow:hidden; width:100%;">
+        <div style="background:#1C1028; height:42px; position:relative;">
+          <div style="position:absolute; bottom:-18px; left:14px; width:36px; height:36px; background:#EEEDFE; border-radius:8px; border:2px solid var(--color-background-primary); display:flex; align-items:center; justify-content:center;">
+            <svg width="22" height="22" viewBox="0 0 36 36">
+              <rect x="4" y="4" width="12" height="12" rx="3" fill="#7F77DD"/>
+              <rect x="20" y="4" width="12" height="12" rx="3" fill="#7F77DD" opacity="0.35"/>
+              <rect x="4" y="20" width="12" height="12" rx="3" fill="#7F77DD" opacity="0.35"/>
+              <rect x="20" y="20" width="12" height="12" rx="3" fill="#7F77DD"/>
+              <line x1="16" y1="10" x2="20" y2="10" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="10" y1="16" x2="10" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="26" y1="16" x2="26" y2="20" stroke="#7F77DD" stroke-width="1.5"/>
+              <line x1="16" y1="26" x2="20" y2="26" stroke="#7F77DD" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+        <div style="padding:26px 14px 14px;">
+          <div style="font-size:14px; font-weight:500; color:var(--color-text-primary);">Auton</div>
+          <div style="font-size:11px; color:var(--color-text-secondary); margin-top:2px;">Automação de processos · Tecnologia</div>
+          <div style="display:flex; gap:6px; margin-top:10px;">
+            <span style="font-size:10px; background:#EEEDFE; color:#3C3489; padding:3px 10px; border-radius:20px; font-weight:500;">Automação</span>
+            <span style="font-size:10px; background:#EEEDFE; color:#3C3489; padding:3px 10px; border-radius:20px; font-weight:500;">RPA</span>
+            <span style="font-size:10px; background:#EEEDFE; color:#3C3489; padding:3px 10px; border-radius:20px; font-weight:500;">Inovação</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 0.5px solid var(--color-border-tertiary); display:flex; gap:12px; flex-wrap:wrap;">
+  <button onclick="sendPrompt('Crie uma proposta de slogan e textos de apresentação para a Auton')" style="flex:1; min-width:160px; padding:10px 16px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:transparent; color:var(--color-text-primary); font-size:13px; cursor:pointer;">Criar slogan e textos ↗</button>
+  <button onclick="sendPrompt('Como ficaria o site da Auton? Crie um mockup da home page')" style="flex:1; min-width:160px; padding:10px 16px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:transparent; color:var(--color-text-primary); font-size:13px; cursor:pointer;">Mockup do site ↗</button>
+  <button onclick="sendPrompt('Quero ajuda para registrar o nome Auton e criar o CNPJ da empresa')" style="flex:1; min-width:160px; padding:10px 16px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:transparent; color:var(--color-text-primary); font-size:13px; cursor:pointer;">Próximos passos ↗</button>
+</div>
