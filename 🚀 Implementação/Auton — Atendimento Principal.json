@@ -1,0 +1,579 @@
+{
+  "name": "Auton — Atendimento Principal",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "waha",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "70c9cc37-ed4b-434e-b5ac-bf0fb23d683e",
+      "name": "Webhook WAHA",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        160
+      ],
+      "webhookId": "auton-waha-incoming"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\n\n// O N8N encapsula o POST body em raw.body\nconst body = raw.body || raw;\n\n// Ignorar mensagens enviadas pelo próprio bot\nif (body.payload?.fromMe === true) {\n  return [];\n}\n\n// Ignorar eventos que não sejam mensagem\nif (body.event && body.event !== 'message') {\n  return [];\n}\n\nconst phone = (body.payload?.from || '').replace('@c.us', '').replace('+', '').replace(/\\D/g, '');\nconst text  = (body.payload?.body || '').trim();\n\nif (!phone || !text) return [];\n\nreturn [{\n  json: {\n    phone,\n    text,\n    session: body.session || 'default',\n    raw: body.payload\n  }\n}];"
+      },
+      "id": "44a8b355-4a07-4b20-8754-d37b186efdab",
+      "name": "Parsear mensagem",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "conversations",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "patient_phone",
+              "condition": "eq",
+              "keyValue": "={{ $json.phone }}"
+            }
+          ]
+        }
+      },
+      "id": "fa7071ac-b33d-47a3-8f5b-a2c1fff97121",
+      "name": "Buscar conversa",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        16
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "patients",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Parsear mensagem').item.json.phone }}"
+            }
+          ]
+        }
+      },
+      "id": "6f39da55-60e1-4a6d-b851-1680e5152643",
+      "name": "Buscar paciente",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        160
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "slots",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "is_available",
+              "condition": "eq",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "id": "25768fa6-29b2-4dcd-a1bf-3bf647e86ec0",
+      "name": "Buscar slots",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        304
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsed   = $('Parsear mensagem').item.json;\nconst convAll  = $('Buscar conversa').all();\nconst patAll   = $('Buscar paciente').all();\nconst slotAll  = $('Buscar slots').all();\n\nconst conv    = convAll[0]?.json  || { state: 'idle', context: '{}', clinic_id: null };\nconst patient = patAll[0]?.json   || null;\nconst slots   = slotAll.map(s => s.json);\n\n// Parsear context se vier como string\nlet ctx = {};\ntry { ctx = typeof conv.context === 'string' ? JSON.parse(conv.context) : (conv.context || {}); } catch(e) {}\n\n// Montar lista de slots formatada\nconst dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];\nconst slotsList = slots.length\n  ? slots.map((s, i) => {\n      const d = new Date(s.date + 'T00:00:00-03:00');\n      return `${i+1}. ${dias[d.getDay()]} ${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} às ${s.time.slice(0,5)}`;\n    }).join('\\n')\n  : 'Nenhum horário disponível no momento.';\n\nconst systemPrompt = `Você é a assistente virtual da Clínica Piloto Auton, especializada em agendamentos.\n\nSERVIÇOS DISPONÍVEIS:\n- Consulta clínica\n- Retorno\n- Exame laboratorial\n\nHORÁRIOS DISPONÍVEIS (próximos ${slots.length} slots livres):\n${slotsList}\n\nDADOS DO PACIENTE:\n- Nome: ${patient?.name || 'Novo paciente'}\n- Última visita: ${patient?.last_visit || 'Nunca'}\n\nESTADO DA CONVERSA: ${conv.state || 'idle'}\nCONTEXTO: ${JSON.stringify(ctx)}\n\nINSTRUÇÕES:\n1. Responda SEMPRE com JSON válido neste formato exato (sem texto fora do JSON):\n   {\"action\": \"...\", \"message\": \"...\", \"data\": {}}\n\n2. ACTIONS:\n   - reply_only         → só responder\n   - update_state       → mudar estado (data obrigatório: {state, context})\n   - book_appointment   → agendar (data obrigatório: {slot_index: 0-${slots.length-1}, service: \"...\"})\n   - cancel_appointment → cancelar agendamento ativo\n\n3. FLUXO:\n   idle → identifying (pedir nome se novo) → scheduling (mostrar slots) → book_appointment\n\n4. REGRAS:\n   - Use APENAS os horários listados acima\n   - Se não houver horários: informe e peça para tentar amanhã\n   - Fora do escopo: \"Para isso fale com a recepção 😊\"\n   - Tom: informal, simpático, objetivo, português BR\n   - Use emojis com moderação (✅ 📅 ⏰ 😊)\n   - Ao confirmar agendamento: inclua nome, serviço, data e hora`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    userMessage: parsed.text,\n    phone: parsed.phone,\n    session: parsed.session,\n    slots,\n    patient,\n    conv,\n    ctx,\n    clinicId: slots[0]?.clinic_id || conv.clinic_id || null\n  }\n}];"
+      },
+      "id": "248bc2d7-ffc6-4a8c-8847-72cf5b10a3a0",
+      "name": "Montar contexto Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 512,\n  \"system\": {{ JSON.stringify($json.systemPrompt) }},\n  \"messages\": [{ \"role\": \"user\", \"content\": {{ JSON.stringify($json.userMessage) }} }]\n}",
+        "options": {}
+      },
+      "id": "ee53059a-5018-4fd8-93c6-a96ac48a9389",
+      "name": "Claude API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -576,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "whtcMiXQaQqdpSKb",
+          "name": "x-api-key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawText = $input.first().json?.content?.[0]?.text || '{}';\nconst ctx = $('Montar contexto Claude').item.json;\n\nlet resp;\ntry {\n  const clean = rawText.replace(/```json\\s*/g,'').replace(/```\\s*/g,'').trim();\n  resp = JSON.parse(clean);\n} catch(e) {\n  resp = { action: 'reply_only', message: 'Desculpe, tive um probleminha aqui. Pode repetir? 😅', data: {} };\n}\n\nreturn [{\n  json: {\n    action:   resp.action  || 'reply_only',\n    message:  resp.message || '',\n    data:     resp.data    || {},\n    phone:    ctx.phone,\n    session:  ctx.session,\n    slots:    ctx.slots,\n    patient:  ctx.patient,\n    conv:     ctx.conv,\n    clinicId: ctx.clinicId\n  }\n}];"
+      },
+      "id": "f2107bbd-4ddd-40ef-b2c5-a093afee3e6b",
+      "name": "Parsear Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ $json.action }}"
+      },
+      "id": "8204d66f-ba75-4486-9f32-4c534a7d4565",
+      "name": "Roteador",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -144,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Preparar agendamento\nconst item = $input.first().json;\nconst slotIndex = item.data?.slot_index ?? 0;\nconst slot = item.slots[slotIndex];\nconst service = item.data?.service || 'Consulta clínica';\n\nif (!slot) {\n  return [{ json: { ...item, error: 'Slot inválido', slot: null } }];\n}\n\nreturn [{ json: { ...item, selectedSlot: slot, service } }];"
+      },
+      "id": "1b1b4482-3c6f-4938-9d94-f975c565a063",
+      "name": "Prep Agendamento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert"
+      },
+      "id": "47e156ee-7e8e-408a-a621-eed5920e8718",
+      "name": "Upsert Paciente",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -192
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "appointments",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "clinic_id",
+              "fieldValue": "={{ $('Prep Agendamento').item.json.clinicId }}"
+            },
+            {
+              "fieldId": "patient_id",
+              "fieldValue": "={{ $json[0]?.id }}"
+            },
+            {
+              "fieldId": "slot_id",
+              "fieldValue": "={{ $('Prep Agendamento').item.json.selectedSlot.id }}"
+            },
+            {
+              "fieldId": "service",
+              "fieldValue": "={{ $('Prep Agendamento').item.json.service }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "agendado"
+            }
+          ]
+        }
+      },
+      "id": "07d97515-36d5-4b9b-9825-8b26ff05d3a3",
+      "name": "Criar Appointment",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        304,
+        80
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "slots",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Prep Agendamento').item.json.selectedSlot.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "is_available",
+              "fieldValue": "false"
+            }
+          ]
+        }
+      },
+      "id": "02d4b587-da3a-4a67-84cd-ca847023e94c",
+      "name": "Bloquear Slot",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        304,
+        352
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert"
+      },
+      "id": "6edc2620-18c9-4e47-809d-2abe7e233521",
+      "name": "Atualizar Conversa",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        96,
+        304
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "z0zNqcQtLcx0Z9TV",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://SEU_VPS_IP:3000/api/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "WAHA_API_KEY_AQUI"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"session\": {{ JSON.stringify($('Parsear Claude').item.json.session) }},\n  \"chatId\": \"{{ $('Parsear Claude').item.json.phone }}@c.us\",\n  \"text\": {{ JSON.stringify($('Parsear Claude').item.json.message) }}\n}",
+        "options": {}
+      },
+      "id": "1475f93b-aecd-4f53-ab4c-efdfe2e09e6a",
+      "name": "Enviar WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        544,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true }",
+        "options": {}
+      },
+      "id": "8fe36ef3-1c39-4016-81ff-ee719571eedc",
+      "name": "Responder 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        768,
+        160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook WAHA": {
+      "main": [
+        [
+          {
+            "node": "Parsear mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear mensagem": {
+      "main": [
+        [
+          {
+            "node": "Buscar conversa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar paciente",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar conversa": {
+      "main": [
+        [
+          {
+            "node": "Montar contexto Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar paciente": {
+      "main": [
+        [
+          {
+            "node": "Montar contexto Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar slots": {
+      "main": [
+        [
+          {
+            "node": "Montar contexto Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar contexto Claude": {
+      "main": [
+        [
+          {
+            "node": "Claude API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude API": {
+      "main": [
+        [
+          {
+            "node": "Parsear Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Claude": {
+      "main": [
+        [
+          {
+            "node": "Roteador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteador": {
+      "main": [
+        [
+          {
+            "node": "Prep Agendamento",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualizar Conversa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prep Agendamento": {
+      "main": [
+        [
+          {
+            "node": "Upsert Paciente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Paciente": {
+      "main": [
+        [
+          {
+            "node": "Criar Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Appointment": {
+      "main": [
+        [
+          {
+            "node": "Bloquear Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bloquear Slot": {
+      "main": [
+        [
+          {
+            "node": "Enviar WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Conversa": {
+      "main": [
+        [
+          {
+            "node": "Enviar WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WAHA": {
+      "main": [
+        [
+          {
+            "node": "Responder 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "bad2de9b-64e1-49c7-8268-9c957aa0dd14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aec8f8a2dcc72fb894779bb30d2c9ac98c4fe17b595dbadd040d49fc744c4ba8"
+  },
+  "id": "knRIGVdF92pjThDg",
+  "tags": []
+}

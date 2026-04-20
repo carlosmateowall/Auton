@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "a1d5ff8510e50d05",
+    "id": "cf2201592100c806",
     "type": "split",
     "children": [
       {
-        "id": "1d48144f6c066834",
+        "id": "49ae1f2c4189d540",
         "type": "tabs",
         "children": [
           {
-            "id": "9aa82f48bb19566d",
+            "id": "10e24a51904cbe08",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -23,28 +23,28 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "e5e3068389bd9e46",
+    "id": "851a6f49ee6347d8",
     "type": "split",
     "children": [
       {
-        "id": "156c02150e50595c",
+        "id": "465c642ea4da5ddb",
         "type": "tabs",
         "children": [
           {
-            "id": "4c73f996a808abca",
+            "id": "78e0b8b8f437a96f",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": true
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "Explorador de arquivos"
             }
           },
           {
-            "id": "032bbebaefb5ec3c",
+            "id": "99898b356f836603",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -61,7 +61,7 @@
             }
           },
           {
-            "id": "cc639d92bfab408e",
+            "id": "91690dfb9dece338",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -77,20 +77,19 @@
     "width": 300
   },
   "right": {
-    "id": "6c82d30903460211",
+    "id": "0389a281a63ae7d4",
     "type": "split",
     "children": [
       {
-        "id": "9c59d1f15d1b193c",
+        "id": "b843e1a5db757381",
         "type": "tabs",
         "children": [
           {
-            "id": "43a21b8b4794e95f",
+            "id": "732d25ac1c1a17d8",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Sem título.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -100,25 +99,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Links inversos para Sem título"
+              "title": "Links inversos"
             }
           },
           {
-            "id": "c020793cc5cb920d",
+            "id": "5e2a85e0f67e9f55",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Sem título.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Links de saída para Sem título"
+              "title": "Links de saída"
             }
           },
           {
-            "id": "eb764851a22e5409",
+            "id": "f7d911e8f7d89d49",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -133,7 +131,7 @@
             }
           },
           {
-            "id": "dec7d2a3a7402fde",
+            "id": "036f23c139cd84cf",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -147,18 +145,17 @@
             }
           },
           {
-            "id": "6994247c41b11878",
+            "id": "f7c3a704c7831a7a",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Sem título.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Sumário de Sem título"
+              "title": "Sumário"
             }
           }
         ]
@@ -179,14 +176,6 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "9aa82f48bb19566d",
-  "lastOpenFiles": [
-    "Boas práticas/guia-cowork-obsidian.md",
-    "Boas práticas",
-    "Sem título 1.canvas",
-    "2026-04-17.md",
-    "Sem título.canvas",
-    "🎨 Identidade Visual/Auton — Identidade Visual.md",
-    "🎨 Identidade Visual/auton_logo_500x500.png"
-  ]
+  "active": "10e24a51904cbe08",
+  "lastOpenFiles": []
 }
