@@ -12,10 +12,7 @@
       "name": "Webhook WAHA",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        -1456,
-        160
-      ],
+      "position": [-1456, 160],
       "webhookId": "auton-waha-incoming"
     },
     {
@@ -26,10 +23,7 @@
       "name": "Parsear mensagem",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -1232,
-        160
-      ]
+      "position": [-1232, 160]
     },
     {
       "parameters": {
@@ -49,10 +43,7 @@
       "name": "Buscar conversa",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        -1024,
-        16
-      ],
+      "position": [-1024, 16],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -78,10 +69,7 @@
       "name": "Buscar paciente",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        -1024,
-        160
-      ],
+      "position": [-1024, 160],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -99,18 +87,23 @@
               "keyName": "is_available",
               "condition": "eq",
               "keyValue": "true"
+            },
+            {
+              "keyName": "date",
+              "condition": "gte",
+              "keyValue": "={{ new Date().toISOString().split('T')[0] }}"
             }
           ]
+        },
+        "options": {
+          "limit": 10
         }
       },
       "id": "25768fa6-29b2-4dcd-a1bf-3bf647e86ec0",
       "name": "Buscar slots",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        -1024,
-        304
-      ],
+      "position": [-1024, 304],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -126,10 +119,7 @@
       "name": "Montar contexto Claude",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -800,
-        160
-      ]
+      "position": [-800, 160]
     },
     {
       "parameters": {
@@ -159,10 +149,7 @@
       "name": "Claude API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [
-        -576,
-        160
-      ],
+      "position": [-576, 160],
       "credentials": {
         "httpHeaderAuth": {
           "id": "whtcMiXQaQqdpSKb",
@@ -172,56 +159,85 @@
     },
     {
       "parameters": {
-        "jsCode": "const rawText = $input.first().json?.content?.[0]?.text || '{}';\nconst ctx = $('Montar contexto Claude').item.json;\n\nlet resp;\ntry {\n  const clean = rawText.replace(/```json\\s*/g,'').replace(/```\\s*/g,'').trim();\n  resp = JSON.parse(clean);\n} catch(e) {\n  resp = { action: 'reply_only', message: 'Desculpe, tive um probleminha aqui. Pode repetir? 😅', data: {} };\n}\n\nreturn [{\n  json: {\n    action:   resp.action  || 'reply_only',\n    message:  resp.message || '',\n    data:     resp.data    || {},\n    phone:    ctx.phone,\n    session:  ctx.session,\n    slots:    ctx.slots,\n    patient:  ctx.patient,\n    conv:     ctx.conv,\n    clinicId: ctx.clinicId\n  }\n}];"
+        "jsCode": "const rawText = $input.first().json?.content?.[0]?.text || '{}';\nconst ctx = $('Montar contexto Claude').item.json;\n\nlet resp;\ntry {\n  const clean = rawText.replace(/```json\\s*/g,'').replace(/```\\s*/g,'').trim();\n  resp = JSON.parse(clean);\n} catch(e) {\n  resp = { action: 'reply_only', message: 'Desculpe, tive um probleminha aqui. Pode repetir? 😅', data: {} };\n}\n\nreturn [{\n  json: {\n    action:   resp.action  || 'reply_only',\n    message:  resp.message || '',\n    data:     resp.data    || {},\n    phone:    ctx.phone,\n    session:  ctx.session,\n    slots:    ctx.slots,\n    patient:  ctx.patient,\n    conv:     ctx.conv,\n    ctx:      ctx.ctx,\n    clinicId: ctx.clinicId\n  }\n}];"
       },
       "id": "f2107bbd-4ddd-40ef-b2c5-a093afee3e6b",
       "name": "Parsear Claude",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -352,
-        160
-      ]
+      "position": [-352, 160]
     },
     {
       "parameters": {
-        "mode": "expression",
-        "output": "={{ $json.action }}"
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "action-book-check",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "book_appointment",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
       },
       "id": "8204d66f-ba75-4486-9f32-4c534a7d4565",
       "name": "Roteador",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
-      "position": [
-        -144,
-        160
-      ]
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-144, 160]
     },
     {
       "parameters": {
-        "jsCode": "// Preparar agendamento\nconst item = $input.first().json;\nconst slotIndex = item.data?.slot_index ?? 0;\nconst slot = item.slots[slotIndex];\nconst service = item.data?.service || 'Consulta clínica';\n\nif (!slot) {\n  return [{ json: { ...item, error: 'Slot inválido', slot: null } }];\n}\n\nreturn [{ json: { ...item, selectedSlot: slot, service } }];"
+        "jsCode": "const item = $input.first().json;\nconst slotIndex = item.data?.slot_index ?? 0;\nconst slot = item.slots[slotIndex];\nconst service = item.data?.service || 'Consulta clínica';\n\nif (!slot) {\n  return [{ json: { ...item, error: 'Slot inválido — índice ' + slotIndex + ' não existe', selectedSlot: null } }];\n}\n\n// Usar ID existente do paciente ou gerar novo UUID\nconst { randomUUID } = require('crypto');\nconst patientId   = item.patient?.id || randomUUID();\nconst patientName = item.data?.name || item.ctx?.name || item.patient?.name || 'Paciente';\n\nreturn [{ json: { ...item, selectedSlot: slot, service, patientId, patientName } }];"
       },
-      "id": "1b1b4482-3c6f-4938-9d94-f975c565a063",
+      "id": "1b1b4482-3c6f-4938-9d94-f95c565a063",
       "name": "Prep Agendamento",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        96,
-        16
-      ]
+      "position": [96, -100]
     },
     {
       "parameters": {
-        "operation": "upsert"
+        "operation": "upsert",
+        "tableId": "patients",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.patientId }}"
+            },
+            {
+              "fieldId": "clinic_id",
+              "fieldValue": "={{ $json.clinicId }}"
+            },
+            {
+              "fieldId": "phone",
+              "fieldValue": "={{ $json.phone }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.patientName }}"
+            }
+          ]
+        }
       },
       "id": "47e156ee-7e8e-408a-a621-eed5920e8718",
       "name": "Upsert Paciente",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        304,
-        -192
-      ],
+      "position": [304, -280],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -240,7 +256,7 @@
             },
             {
               "fieldId": "patient_id",
-              "fieldValue": "={{ $json[0]?.id }}"
+              "fieldValue": "={{ $json.id }}"
             },
             {
               "fieldId": "slot_id",
@@ -261,10 +277,7 @@
       "name": "Criar Appointment",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        304,
-        80
-      ],
+      "position": [304, -100],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -298,10 +311,7 @@
       "name": "Bloquear Slot",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        304,
-        352
-      ],
+      "position": [304, 100],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -311,16 +321,52 @@
     },
     {
       "parameters": {
-        "operation": "upsert"
+        "jsCode": "const item = $input.first().json;\n\n// Estado atual da conversa (fallback: idle)\nlet newState   = item.conv?.state || 'idle';\nlet newContext = item.ctx || {};\n\nif (item.action === 'update_state' && item.data?.state) {\n  newState   = item.data.state;\n  newContext = typeof item.data.context === 'object' ? item.data.context : {};\n} else if (item.action === 'book_appointment') {\n  // Agendamento concluído → resetar conversa\n  newState   = 'idle';\n  newContext = {};\n} else if (item.action === 'cancel_appointment') {\n  newState   = 'idle';\n  newContext = {};\n}\n// reply_only → mantém estado atual\n\nconst { randomUUID } = require('crypto');\nconst convId = item.conv?.id || randomUUID();\n\nreturn [{ json: { ...item, convId, newState, newContext } }];"
+      },
+      "id": "cc001234-0000-0000-0000-000000000002",
+      "name": "Prep Conversa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [544, 160]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "conversations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.convId }}"
+            },
+            {
+              "fieldId": "clinic_id",
+              "fieldValue": "={{ $json.clinicId }}"
+            },
+            {
+              "fieldId": "patient_phone",
+              "fieldValue": "={{ $json.phone }}"
+            },
+            {
+              "fieldId": "state",
+              "fieldValue": "={{ $json.newState }}"
+            },
+            {
+              "fieldId": "context",
+              "fieldValue": "={{ JSON.stringify($json.newContext) }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
       },
       "id": "6edc2620-18c9-4e47-809d-2abe7e233521",
       "name": "Atualizar Conversa",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [
-        96,
-        304
-      ],
+      "position": [768, 160],
       "credentials": {
         "supabaseApi": {
           "id": "z0zNqcQtLcx0Z9TV",
@@ -354,10 +400,7 @@
       "name": "Enviar WAHA",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [
-        544,
-        160
-      ]
+      "position": [992, 160]
     },
     {
       "parameters": {
@@ -369,10 +412,7 @@
       "name": "Responder 200",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [
-        768,
-        160
-      ]
+      "position": [1216, 160]
     }
   ],
   "pinData": {},
@@ -482,14 +522,11 @@
             "node": "Prep Agendamento",
             "type": "main",
             "index": 0
-          },
+          }
+        ],
+        [
           {
-            "node": "Atualizar Conversa",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Enviar WAHA",
+            "node": "Prep Conversa",
             "type": "main",
             "index": 0
           }
@@ -533,7 +570,18 @@
       "main": [
         [
           {
-            "node": "Enviar WAHA",
+            "node": "Prep Conversa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prep Conversa": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Conversa",
             "type": "main",
             "index": 0
           }
@@ -563,7 +611,7 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
