@@ -192,11 +192,10 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=http://SEU_VPS_IP:3000/api/sendText",
+        "url": "https://waha-production-c02b.up.railway.app/api/sendText",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "X-Api-Key",    "value": "WAHA_API_KEY_AQUI" },
             { "name": "Content-Type", "value": "application/json" }
           ]
         },
