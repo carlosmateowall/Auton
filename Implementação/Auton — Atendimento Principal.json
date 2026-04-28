@@ -1,29 +1,30 @@
 {
-  "name": "Auton — Atendimento Principal",
+  "name": "Auton — Atendimento Principal v3",
   "nodes": [
     {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "waha",
-        "responseMode": "responseNode",
-        "options": {}
-      },
-      "id": "70c9cc37-ed4b-434e-b5ac-bf0fb23d683e",
-      "name": "Webhook WAHA",
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [-1456, 160],
-      "webhookId": "auton-waha-incoming"
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        640,
+        3984
+      ],
+      "id": "39c8f827-49d9-4de4-919c-518d60bb7333",
+      "name": "WAHA Trigger",
+      "webhookId": "8462e0a9-8508-46ca-9954-9a150589d7aa"
     },
     {
       "parameters": {
-        "jsCode": "const raw = $input.first().json;\n\nconst body = raw.body || raw;\n\nif (body.payload?.fromMe === true) return [];\nif (body.event && body.event !== 'message') return [];\n\nconst phone = (body.payload?.from || '').replace('@c.us', '').replace('+', '').replace(/\\D/g, '');\nconst text  = (body.payload?.body || '').trim();\n\nif (!phone || !text) return [];\n\nreturn [{ json: { phone, text, session: body.session || 'default', raw: body.payload } }];"
+        "jsCode": "const raw = $input.first().json;\nconst body = raw.body || raw;\n\nif (body.payload?.fromMe === true) return [];\nif (body.event && body.event !== 'message') return [];\n\nconst from = body.payload?.from || '';\nconst text = (body.payload?.body || '').trim();\n\nif (!from || !text) return [];\n\nreturn [{ json: {\n  phone:   from,\n  chatId:  from,\n  text,\n  session: body.session || 'default',\n  raw:     body.payload\n} }];"
       },
-      "id": "44a8b355-4a07-4b20-8754-d37b186efdab",
+      "id": "9a10f308-e11e-4567-8696-55da9201f0f4",
       "name": "Parsear mensagem",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-1232, 160]
+      "position": [
+        864,
+        3984
+      ]
     },
     {
       "parameters": {
@@ -39,14 +40,17 @@
           ]
         }
       },
-      "id": "fa7071ac-b33d-47a3-8f5b-a2c1fff97121",
+      "id": "cb525e77-d764-485a-bc9b-81a3e8f9f147",
       "name": "Buscar conversa",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [-1024, 16],
+      "position": [
+        1072,
+        3808
+      ],
       "credentials": {
         "supabaseApi": {
-          "id": "ArEp44L1ngousPz7",
+          "id": "wCvxW3vxvHOjVmq4",
           "name": "Supabase account"
         }
       }
@@ -65,14 +69,17 @@
           ]
         }
       },
-      "id": "6f39da55-60e1-4a6d-b851-1680e5152643",
+      "id": "69358b99-d650-4d54-864c-e57115f40308",
       "name": "Buscar paciente",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [-1024, 160],
+      "position": [
+        1072,
+        3984
+      ],
       "credentials": {
         "supabaseApi": {
-          "id": "ArEp44L1ngousPz7",
+          "id": "wCvxW3vxvHOjVmq4",
           "name": "Supabase account"
         }
       }
@@ -94,188 +101,144 @@
               "keyValue": "={{ new Date().toISOString().split('T')[0] }}"
             }
           ]
-        },
-        "options": {
-          "limit": 10
         }
       },
-      "id": "25768fa6-29b2-4dcd-a1bf-3bf647e86ec0",
+      "id": "423f1be3-4f45-462b-9953-e070e782e094",
       "name": "Buscar slots",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [-1024, 304],
+      "position": [
+        1072,
+        4160
+      ],
       "credentials": {
         "supabaseApi": {
-          "id": "ArEp44L1ngousPz7",
+          "id": "wCvxW3vxvHOjVmq4",
           "name": "Supabase account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "const parsed  = $('Parsear mensagem').item.json;\nconst convAll = $('Buscar conversa').all();\nconst patAll  = $('Buscar paciente').all();\nconst slotAll = $('Buscar slots').all();\n\nconst conv    = convAll[0]?.json || { state: 'idle', context: '{}', clinic_id: null };\nconst patient = patAll[0]?.json  || null;\nconst slots   = slotAll.map(s => s.json);\n\nlet ctx = {};\ntry { ctx = typeof conv.context === 'string' ? JSON.parse(conv.context) : (conv.context || {}); } catch(e) {}\n\nconst dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];\nconst slotsList = slots.length\n  ? slots.map((s, i) => {\n      const d = new Date(s.date + 'T00:00:00-03:00');\n      return `${i+1}. ${dias[d.getDay()]} ${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} às ${s.time.slice(0,5)}`;\n    }).join('\\n')\n  : 'Nenhum horário disponível no momento.';\n\nconst systemPrompt = `Você é a assistente virtual da Clínica Piloto Auton, especializada em agendamentos.\n\nSERVIÇOS DISPONÍVEIS:\n- Consulta clínica\n- Retorno\n- Exame laboratorial\n\nHORÁRIOS DISPONÍVEIS (próximos ${slots.length} slots livres):\n${slotsList}\n\nDADOS DO PACIENTE:\n- Nome: ${patient?.name || 'Novo paciente'}\n- Última visita: ${patient?.last_visit || 'Nunca'}\n\nESTADO DA CONVERSA: ${conv.state || 'idle'}\nCONTEXTO: ${JSON.stringify(ctx)}\n\nINSTRUÇÕES:\n1. Responda SEMPRE com JSON válido neste formato exato (sem texto fora do JSON):\n   {\"action\": \"...\", \"message\": \"...\", \"data\": {}}\n\n2. ACTIONS disponíveis:\n   - reply_only          → só responder, sem mudança de estado\n   - update_state        → mudar estado (data obrigatório: {state, context})\n   - book_appointment    → agendar (data obrigatório: {slot_index: 0-${slots.length - 1}, service: \"...\"})\n   - confirm_appointment → confirmar consulta do lembrete D-1 (SOMENTE quando state = confirming)\n   - cancel_appointment  → cancelar consulta do lembrete D-1 (SOMENTE quando state = confirming)\n\n3. FLUXO NORMAL (state != confirming):\n   idle → identifying (pedir nome se novo) → scheduling (mostrar slots) → book_appointment\n\n4. FLUXO CONFIRMAÇÃO (state = confirming):\n   Paciente está respondendo ao lembrete enviado pelo sistema.\n   - Resposta positiva (1, sim, ok, confirmo, vou, estarei lá, etc.) → action = \"confirm_appointment\"\n   - Resposta negativa (2, não, nao, cancela, não posso, não vou, etc.) → action = \"cancel_appointment\"\n   - Confirmação: mensagem simpática confirmando o horário\n   - Cancelamento: mensagem simpática, informe que a vaga será liberada e ofereça remarcar quando quiser\n   - Em ambos: data = {}\n\n5. REGRAS GERAIS:\n   - Use APENAS os horários listados acima para agendar\n   - Se não houver horários: informe e peça para tentar amanhã\n   - Fora do escopo: \"Para isso fale com a recepção 😊\"\n   - Tom: informal, simpático, objetivo, português BR\n   - Emojis com moderação (✅ 📅 ⏰ 😊)\n   - Ao confirmar novo agendamento: inclua nome, serviço, data e hora`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    userMessage: parsed.text,\n    phone:    parsed.phone,\n    session:  parsed.session,\n    slots,\n    patient,\n    conv,\n    ctx,\n    clinicId: slots[0]?.clinic_id || conv.clinic_id || null\n  }\n}];"
+        "jsCode": "const parsed  = $('Parsear mensagem').item.json;\nconst convAll = $('Buscar conversa').all();\nconst patAll  = $('Buscar paciente').all();\nconst slotAll = $('Buscar slots').all();\n\nconst conv    = convAll[0]?.json || { state: 'idle', context: '{}', clinic_id: null };\nconst patient = patAll[0]?.json  || null;\nconst slots   = slotAll.map(s => s.json);\n\nreturn [{ json: {\n  phone:    parsed.phone,\n  chatId:   parsed.chatId,\n  text:     parsed.text,\n  session:  parsed.session,\n  conv, patient, slots,\n  clinicId: slots[0]?.clinic_id || conv.clinic_id || null\n} }];"
       },
-      "id": "248bc2d7-ffc6-4a8c-8847-72cf5b10a3a0",
-      "name": "Montar contexto Claude",
+      "id": "d423fdd6-88af-4303-b31d-a60839f86e14",
+      "name": "Montar contexto",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-800, 160]
+      "position": [
+        1312,
+        3984
+      ]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.anthropic.com/v1/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" },
-            { "name": "content-type",       "value": "application/json" }
-          ]
+        "jsCode": "const data = $input.first().json;\nconst { text, phone, chatId, session, conv, patient, slots, clinicId } = data;\n\nconst state = conv?.state || 'idle';\nlet ctx = {};\ntry { ctx = typeof conv?.context === 'string' ? JSON.parse(conv.context) : (conv?.context || {}); } catch(e) {}\n\nconst input = text.trim().toLowerCase();\nconst num   = parseInt(text.trim());\n\nconst dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];\nconst top5 = (slots || []).slice(0, 5);\nconst slotsList = top5.length\n  ? top5.map((s, i) => {\n      const d = new Date(s.date + 'T00:00:00-03:00');\n      return `${i+1}. ${dias[d.getDay()]} ${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} as ${s.time.slice(0,5)}`;\n    }).join('\\n')\n  : null;\n\nconst SERVICES = ['Consulta clinica', 'Retorno', 'Exame laboratorial'];\n\nconst MENU_MSG =\n  'Ola! Sou a assistente virtual da Clinica Piloto.\\n\\n' +\n  'Como posso ajudar?\\n\\n' +\n  '1. Agendar consulta\\n' +\n  '2. Cancelar consulta\\n' +\n  '3. Falar com a recepcao\\n\\n' +\n  'Digite o numero da opcao.';\n\nconst SERVICES_MSG =\n  'Qual servico voce precisa?\\n\\n' +\n  '1. Consulta clinica\\n' +\n  '2. Retorno\\n' +\n  '3. Exame laboratorial\\n\\n' +\n  'Digite o numero.';\n\nlet message    = '';\nlet newState   = 'menu';\nlet newContext = {};\nlet action     = 'reply';\nlet bookingData = null;\n\nswitch (state) {\n\n  case 'menu':\n    if (num === 1) {\n      if (!slotsList) {\n        message  = 'Nao ha horarios disponiveis no momento.\\nTente amanha ou ligue para a recepcao.';\n        newState = 'idle';\n      } else {\n        message  = SERVICES_MSG;\n        newState = 'selecting_service';\n      }\n    } else if (num === 2) {\n      message  = 'Para cancelar sua consulta, entre em contato com nossa recepcao.\\nEm breve voce podera cancelar por aqui mesmo!';\n      newState = 'idle';\n    } else if (num === 3) {\n      message  = 'Certo! Nossa recepcionista vai entrar em contato em breve.';\n      newState = 'idle';\n    } else {\n      message  = 'Nao entendi. Por favor, escolha uma opcao:\\n\\n' + MENU_MSG;\n      newState = 'menu';\n    }\n    break;\n\n  case 'selecting_service':\n    if (num >= 1 && num <= 3) {\n      const svc = SERVICES[num - 1];\n      if (!slotsList) {\n        message  = 'Sem horarios disponiveis agora.\\nTente amanha ou ligue para a recepcao.';\n        newState = 'idle';\n      } else {\n        message  = `Otimo! Horarios disponiveis para ${svc}:\\n\\n${slotsList}\\n\\nDigite o numero do horario desejado.`;\n        newState = 'selecting_slot';\n        newContext = { service: svc };\n      }\n    } else {\n      message  = 'Escolha uma opcao valida (1, 2 ou 3):\\n\\n' + SERVICES_MSG;\n      newState = 'selecting_service';\n      newContext = ctx;\n    }\n    break;\n\n  case 'selecting_slot':\n    const svc = ctx.service || 'Consulta clinica';\n    if (num >= 1 && num <= top5.length) {\n      const slot    = top5[num - 1];\n      const d       = new Date(slot.date + 'T00:00:00-03:00');\n      const dateStr = `${dias[d.getDay()]} ${d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} as ${slot.time.slice(0,5)}`;\n      const patientId = patient?.id || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n        const r = Math.random() * 16 | 0;\n        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n      });\n      message  = `Agendamento confirmado!\\n\\nServico: ${svc}\\nData: ${dateStr}\\n\\nAte la! Voce recebera um lembrete no dia anterior.`;\n      newState = 'idle';\n      action   = 'book';\n      bookingData = {\n        slot, slotId: slot.id, service: svc,\n        patientId, patientName: patient?.name || 'Paciente',\n        clinicId: slot.clinic_id || clinicId\n      };\n    } else {\n      message  = `Escolha um numero entre 1 e ${top5.length}:\\n\\n${slotsList}`;\n      newState = 'selecting_slot';\n      newContext = ctx;\n    }\n    break;\n\n  case 'confirming':\n    const isYes = num === 1 || ['sim','s','ok','confirmo','vou'].some(w => input.includes(w));\n    if (isYes) {\n      message = 'Presenca confirmada! Ate amanha.\\n\\nLembre-se: chegue 15 minutos antes.';\n    } else {\n      message = 'Tudo bem! Sua consulta foi cancelada. Quando quiser reagendar, e so chamar.';\n    }\n    newState = 'idle';\n    break;\n\n  case 'idle':\n  default:\n    message  = MENU_MSG;\n    newState = 'menu';\n    break;\n}\n\nconst convId = conv?.id || 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n  const r = Math.random() * 16 | 0;\n  return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n});\n\nreturn [{ json: {\n  message, newState, newContext, action, bookingData,\n  phone, chatId, session, clinicId, convId,\n  conv, patient, slots\n} }];"
+      },
+      "id": "a37d03f7-9293-4289-91d7-d531aaca2364",
+      "name": "Processar estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        3984
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check-book",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "book",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
         },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 512,\n  \"system\": {{ JSON.stringify($json.systemPrompt) }},\n  \"messages\": [{ \"role\": \"user\", \"content\": {{ JSON.stringify($json.userMessage) }} }]\n}",
         "options": {}
       },
-      "id": "ee53059a-5018-4fd8-93c6-a96ac48a9389",
-      "name": "Claude API",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4,
-      "position": [-576, 160],
+      "id": "5c688cc3-2e9f-4bd0-b329-d885f6cd216f",
+      "name": "IF Agendar",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        3984
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert"
+      },
+      "id": "ee960a67-2377-4842-a79f-fd364561e719",
+      "name": "Upsert Paciente",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2032,
+        3808
+      ],
       "credentials": {
-        "httpHeaderAuth": {
-          "id": "whtcMiXQaQqdpSKb",
-          "name": "x-api-key"
+        "supabaseApi": {
+          "id": "wCvxW3vxvHOjVmq4",
+          "name": "Supabase account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "const rawText = $input.first().json?.content?.[0]?.text || '{}';\nconst ctx = $('Montar contexto Claude').item.json;\n\nlet resp;\ntry {\n  const clean = rawText.replace(/```json\\s*/g,'').replace(/```\\s*/g,'').trim();\n  resp = JSON.parse(clean);\n} catch(e) {\n  resp = { action: 'reply_only', message: 'Desculpe, tive um probleminha aqui. Pode repetir? 😅', data: {} };\n}\n\nreturn [{\n  json: {\n    action:   resp.action  || 'reply_only',\n    message:  resp.message || '',\n    data:     resp.data    || {},\n    phone:    ctx.phone,\n    session:  ctx.session,\n    slots:    ctx.slots,\n    patient:  ctx.patient,\n    conv:     ctx.conv,\n    ctx:      ctx.ctx,\n    clinicId: ctx.clinicId\n  }\n}];"
-      },
-      "id": "f2107bbd-4ddd-40ef-b2c5-a093afee3e6b",
-      "name": "Parsear Claude",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [-352, 160]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
-          "conditions": [
-            {
-              "id": "check-book",
-              "leftValue": "={{ $json.action }}",
-              "rightValue": "book_appointment",
-              "operator": { "type": "string", "operation": "equals", "name": "filter.operator.equals" }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "8204d66f-ba75-4486-9f32-4c534a7d4565",
-      "name": "Roteador",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [-144, 160]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
-          "conditions": [
-            {
-              "id": "check-confirm",
-              "leftValue": "={{ $json.action }}",
-              "rightValue": "confirm_appointment",
-              "operator": { "type": "string", "operation": "equals", "name": "filter.operator.equals" }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "aa000001-0000-0000-0000-000000000001",
-      "name": "IF Confirmar",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [-144, 360]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
-          "conditions": [
-            {
-              "id": "check-cancel",
-              "leftValue": "={{ $json.action }}",
-              "rightValue": "cancel_appointment",
-              "operator": { "type": "string", "operation": "equals", "name": "filter.operator.equals" }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "id": "aa000001-0000-0000-0000-000000000002",
-      "name": "IF Cancelar",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [-144, 520]
-    },
-    {
-      "parameters": {
-        "jsCode": "const item = $input.first().json;\nconst slotIndex = item.data?.slot_index ?? 0;\nconst slot = item.slots[slotIndex];\nconst service = item.data?.service || 'Consulta clínica';\n\nif (!slot) {\n  return [{ json: { ...item, error: 'Slot inválido — índice ' + slotIndex + ' não existe', selectedSlot: null } }];\n}\n\nconst { randomUUID } = require('crypto');\nconst patientId   = item.patient?.id || randomUUID();\nconst patientName = item.data?.name || item.ctx?.name || item.patient?.name || 'Paciente';\n\nreturn [{ json: { ...item, selectedSlot: slot, service, patientId, patientName } }];"
-      },
-      "id": "1b1b4482-3c6f-4938-9d94-f95c565a063",
-      "name": "Prep Agendamento",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [96, -100]
-    },
-    {
-      "parameters": {
-        "operation": "upsert",
-        "tableId": "patients",
-        "fieldsUi": {
-          "fieldValues": [
-            { "fieldId": "id",        "fieldValue": "={{ $json.patientId }}" },
-            { "fieldId": "clinic_id", "fieldValue": "={{ $json.clinicId }}" },
-            { "fieldId": "phone",     "fieldValue": "={{ $json.phone }}" },
-            { "fieldId": "name",      "fieldValue": "={{ $json.patientName }}" }
-          ]
-        }
-      },
-      "id": "47e156ee-7e8e-408a-a621-eed5920e8718",
-      "name": "Upsert Paciente",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [304, -280],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
-    },
-    {
-      "parameters": {
         "tableId": "appointments",
         "fieldsUi": {
           "fieldValues": [
-            { "fieldId": "clinic_id",  "fieldValue": "={{ $('Prep Agendamento').item.json.clinicId }}" },
-            { "fieldId": "patient_id", "fieldValue": "={{ $json.id }}" },
-            { "fieldId": "slot_id",    "fieldValue": "={{ $('Prep Agendamento').item.json.selectedSlot.id }}" },
-            { "fieldId": "service",    "fieldValue": "={{ $('Prep Agendamento').item.json.service }}" },
-            { "fieldId": "status",     "fieldValue": "agendado" }
+            {
+              "fieldId": "clinic_id",
+              "fieldValue": "={{ $('Processar estado').item.json.bookingData.clinicId }}"
+            },
+            {
+              "fieldId": "patient_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "slot_id",
+              "fieldValue": "={{ $('Processar estado').item.json.bookingData.slotId }}"
+            },
+            {
+              "fieldId": "service",
+              "fieldValue": "={{ $('Processar estado').item.json.bookingData.service }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "agendado"
+            }
           ]
         }
       },
-      "id": "07d97515-36d5-4b9b-9825-8b26ff05d3a3",
+      "id": "6a3713f7-95e5-4b43-9f37-e006a55413e7",
       "name": "Criar Appointment",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [304, -100],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
+      "position": [
+        2032,
+        3648
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "wCvxW3vxvHOjVmq4",
+          "name": "Supabase account"
+        }
+      }
     },
     {
       "parameters": {
@@ -283,313 +246,465 @@
         "tableId": "slots",
         "filters": {
           "conditions": [
-            { "keyName": "id", "condition": "eq", "keyValue": "={{ $('Prep Agendamento').item.json.selectedSlot.id }}" }
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Processar estado').item.json.bookingData.slotId }}"
+            }
           ]
         },
         "fieldsUi": {
           "fieldValues": [
-            { "fieldId": "is_available", "fieldValue": "false" }
+            {
+              "fieldId": "is_available",
+              "fieldValue": "false"
+            }
           ]
         }
       },
-      "id": "02d4b587-da3a-4a67-84cd-ca847023e94c",
+      "id": "93ec939a-ebd5-4b66-8beb-c3211e86ca71",
       "name": "Bloquear Slot",
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
-      "position": [304, 100],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
+      "position": [
+        2032,
+        3488
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "wCvxW3vxvHOjVmq4",
+          "name": "Supabase account"
+        }
+      }
     },
     {
       "parameters": {
-        "jsCode": "const item = $input.first().json;\nconst appointmentId = item.ctx?.appointment_id || null;\nreturn [{ json: { ...item, appointmentId } }];"
+        "jsCode": "const proc   = $('Processar estado').item.json;\nconst apptId = $('Criar Appointment').item.json?.id || null;\nreturn [{ json: {\n  message:    proc.message,\n  newState:   proc.newState,\n  newContext: apptId ? { appointment_id: apptId } : {},\n  phone:      proc.phone,\n  chatId:     proc.chatId,\n  session:    proc.session,\n  clinicId:   proc.clinicId,\n  convId:     proc.convId\n} }];"
       },
-      "id": "aa000001-0000-0000-0000-000000000003",
-      "name": "Prep Confirmação",
+      "id": "ae318023-1860-4ff9-8d23-d99172f7f30a",
+      "name": "Prep pos agendamento",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [96, 360]
+      "position": [
+        2272,
+        3648
+      ]
     },
     {
       "parameters": {
-        "operation": "update",
-        "tableId": "appointments",
-        "filters": {
-          "conditions": [
-            { "keyName": "id", "condition": "eq", "keyValue": "={{ $json.appointmentId }}" }
-          ]
-        },
-        "fieldsUi": {
-          "fieldValues": [
-            { "fieldId": "status",       "fieldValue": "confirmado" },
-            { "fieldId": "confirmed_at", "fieldValue": "={{ new Date().toISOString() }}" }
-          ]
-        }
+        "jsCode": "const proc = $('Processar estado').item.json;\nreturn [{ json: {\n  message:    proc.message,\n  newState:   proc.newState,\n  newContext: proc.newContext,\n  phone:      proc.phone,\n  chatId:     proc.chatId,\n  session:    proc.session,\n  clinicId:   proc.clinicId,\n  convId:     proc.convId\n} }];"
       },
-      "id": "aa000001-0000-0000-0000-000000000004",
-      "name": "Confirmar Appointment",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [304, 360],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
-    },
-    {
-      "parameters": {
-        "jsCode": "const item = $input.first().json;\nconst appointmentId = item.ctx?.appointment_id || null;\nreturn [{ json: { ...item, appointmentId } }];"
-      },
-      "id": "aa000001-0000-0000-0000-000000000005",
-      "name": "Prep Cancelamento",
+      "id": "4edd2400-a85f-4b6f-bc12-b8b67b8b387e",
+      "name": "Prep reply",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [96, 520]
-    },
-    {
-      "parameters": {
-        "operation": "getAll",
-        "tableId": "appointments",
-        "filters": {
-          "conditions": [
-            { "keyName": "id", "condition": "eq", "keyValue": "={{ $json.appointmentId }}" }
-          ]
-        }
-      },
-      "id": "aa000001-0000-0000-0000-000000000006",
-      "name": "Buscar Appointment Ativo",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [304, 520],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "tableId": "appointments",
-        "filters": {
-          "conditions": [
-            { "keyName": "id", "condition": "eq", "keyValue": "={{ $json.id }}" }
-          ]
-        },
-        "fieldsUi": {
-          "fieldValues": [
-            { "fieldId": "status", "fieldValue": "cancelado" }
-          ]
-        }
-      },
-      "id": "aa000001-0000-0000-0000-000000000007",
-      "name": "Cancelar Appointment",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [496, 520],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "tableId": "slots",
-        "filters": {
-          "conditions": [
-            { "keyName": "id", "condition": "eq", "keyValue": "={{ $('Buscar Appointment Ativo').item.json.slot_id }}" }
-          ]
-        },
-        "fieldsUi": {
-          "fieldValues": [
-            { "fieldId": "is_available", "fieldValue": "true" }
-          ]
-        }
-      },
-      "id": "aa000001-0000-0000-0000-000000000008",
-      "name": "Liberar Slot",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [688, 520],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
+      "position": [
+        2032,
+        4160
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=http://localhost:5678/webhook/lista-de-espera",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"clinic_id\": {{ JSON.stringify($('Buscar Appointment Ativo').item.json.clinic_id) }},\n  \"slot_id\":   {{ JSON.stringify($('Buscar Appointment Ativo').item.json.slot_id) }},\n  \"service\":   {{ JSON.stringify($('Buscar Appointment Ativo').item.json.service) }}\n}",
-        "options": {
-          "timeout": 5000,
-          "response": { "response": { "neverError": true } }
-        }
-      },
-      "id": "aa000001-0000-0000-0000-000000000009",
-      "name": "Notificar Lista de Espera",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4,
-      "position": [900, 520],
-      "notes": "Dispara o workflow Lista de Espera de forma assíncrona (webhook responde imediatamente). neverError=true evita que uma fila vazia quebre o fluxo principal."
-    },
-    {
-      "parameters": {
-        "jsCode": "// Sempre referencia Parsear Claude pelo nome — garante que phone, clinicId,\n// conv, ctx etc. estejam presentes independentemente de qual branch\n// (booking, confirmação, cancelamento, fallback) chegou até este nó.\nconst parsed = $('Parsear Claude').item.json;\n\nlet newState   = parsed.conv?.state || 'idle';\nlet newContext = parsed.ctx || {};\n\nif (parsed.action === 'update_state' && parsed.data?.state) {\n  newState   = parsed.data.state;\n  newContext = typeof parsed.data.context === 'object' ? parsed.data.context : {};\n} else if (['book_appointment', 'confirm_appointment', 'cancel_appointment'].includes(parsed.action)) {\n  newState   = 'idle';\n  newContext = {};\n}\n\nconst { randomUUID } = require('crypto');\nconst convId = parsed.conv?.id || randomUUID();\n\nreturn [{ json: { ...parsed, convId, newState, newContext } }];"
-      },
-      "id": "cc001234-0000-0000-0000-000000000002",
-      "name": "Prep Conversa",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [900, 160]
-    },
-    {
-      "parameters": {
-        "operation": "upsert",
-        "tableId": "conversations",
-        "fieldsUi": {
-          "fieldValues": [
-            { "fieldId": "id",            "fieldValue": "={{ $json.convId }}" },
-            { "fieldId": "clinic_id",     "fieldValue": "={{ $json.clinicId }}" },
-            { "fieldId": "patient_phone", "fieldValue": "={{ $json.phone }}" },
-            { "fieldId": "state",         "fieldValue": "={{ $json.newState }}" },
-            { "fieldId": "context",       "fieldValue": "={{ JSON.stringify($json.newContext) }}" },
-            { "fieldId": "updated_at",    "fieldValue": "={{ new Date().toISOString() }}" }
-          ]
-        }
-      },
-      "id": "6edc2620-18c9-4e47-809d-2abe7e233521",
-      "name": "Atualizar Conversa",
-      "type": "n8n-nodes-base.supabase",
-      "typeVersion": 1,
-      "position": [1120, 160],
-      "credentials": { "supabaseApi": { "id": "ArEp44L1ngousPz7", "name": "Supabase account" } }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://waha-production-c02b.up.railway.app/api/sendText",
+        "url": "https://vmtlezhtxueeogudmdnb.supabase.co/rest/v1/conversations",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" }
+            {
+              "name": "apikey"
+            },
+            {
+              "name": "Authorization"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"session\": {{ JSON.stringify($('Parsear Claude').item.json.session) }},\n  \"chatId\": \"{{ $('Parsear Claude').item.json.phone }}@c.us\",\n  \"text\": {{ JSON.stringify($('Parsear Claude').item.json.message) }}\n}",
+        "jsonBody": "={\n  \"patient_phone\": {{ JSON.stringify($json.phone) }},\n  \"state\":         {{ JSON.stringify($json.newState) }},\n  \"context\":       {{ JSON.stringify($json.newContext) }},\n  \"clinic_id\":     {{ JSON.stringify($json.clinicId) }},\n  \"updated_at\":    {{ JSON.stringify(new Date().toISOString()) }}\n}",
         "options": {}
       },
-      "id": "1475f93b-aecd-4f53-ab4c-efdfe2e09e6a",
-      "name": "Enviar WAHA",
+      "id": "0f8b31e7-2c33-425b-8312-9f71d0b15320",
+      "name": "Upsert Conversa (booking)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
-      "position": [1340, 160]
+      "position": [
+        2512,
+        3648
+      ]
     },
     {
       "parameters": {
-        "respondWith": "json",
-        "responseBody": "={ \"ok\": true }",
+        "method": "POST",
+        "url": "https://vmtlezhtxueeogudmdnb.supabase.co/rest/v1/conversations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey"
+            },
+            {
+              "name": "Authorization"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"patient_phone\": {{ JSON.stringify($json.phone) }},\n  \"state\":         {{ JSON.stringify($json.newState) }},\n  \"context\":       {{ JSON.stringify($json.newContext) }},\n  \"clinic_id\":     {{ JSON.stringify($json.clinicId) }},\n  \"updated_at\":    {{ JSON.stringify(new Date().toISOString()) }}\n}",
         "options": {}
       },
-      "id": "8fe36ef3-1c39-4016-81ff-ee719571eedc",
-      "name": "Responder 200",
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1,
-      "position": [1560, 160]
+      "id": "3f80d53d-3a04-417c-a010-96c4c5d8d9ff",
+      "name": "Upsert Conversa (reply)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2272,
+        4160
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2768,
+        3664
+      ],
+      "id": "7bdcf567-72cd-4927-8640-3986226d15f1",
+      "name": "Enviar WAHA (booking)",
+      "credentials": {
+        "wahaApi": {
+          "id": "pam1IYvLfhtPzmQJ",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2512,
+        4160
+      ],
+      "id": "a3ed396e-3ab9-4df6-839a-bbeafdfe0aab",
+      "name": "Enviar WAHA (reply)",
+      "credentials": {
+        "wahaApi": {
+          "id": "pam1IYvLfhtPzmQJ",
+          "name": "WAHA account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "WAHA Trigger": [
+      {
+        "json": {
+          "id": "evt_01kqa7byb84yg8ey65zcdwzskz",
+          "timestamp": 1777385994601,
+          "event": "message",
+          "session": "default",
+          "metadata": {},
+          "me": {
+            "id": "556182365437@c.us",
+            "pushName": "Mateo",
+            "lid": "124416646238274@lid"
+          },
+          "payload": {
+            "id": "false_263620881551525@lid_3A611A7701A1E25BC22E",
+            "timestamp": 1777385994,
+            "from": "263620881551525@lid",
+            "fromMe": false,
+            "source": "app",
+            "body": "vou abrir ak e ver se tem coisa recente",
+            "hasMedia": false,
+            "media": null,
+            "ack": 2,
+            "ackName": "DEVICE",
+            "location": null,
+            "vCards": null,
+            "replyTo": null,
+            "_data": {
+              "key": {
+                "remoteJid": "263620881551525@lid",
+                "remoteJidAlt": "556182082144@s.whatsapp.net",
+                "fromMe": false,
+                "id": "3A611A7701A1E25BC22E",
+                "participant": "",
+                "addressingMode": "lid"
+              },
+              "messageTimestamp": 1777385994,
+              "pushName": "Lucas Wall",
+              "broadcast": false,
+              "message": {
+                "extendedTextMessage": {
+                  "text": "vou abrir ak e ver se tem coisa recente",
+                  "contextInfo": {
+                    "expiration": 0,
+                    "ephemeralSettingTimestamp": "1687229753",
+                    "disappearingMode": {
+                      "initiator": "CHANGED_IN_CHAT"
+                    }
+                  }
+                },
+                "messageContextInfo": {
+                  "deviceListMetadata": {
+                    "senderKeyHash": "mYke1FUCOPAKjw==",
+                    "senderTimestamp": "1777289716",
+                    "recipientKeyHash": "gdPAmcODyBPRCw==",
+                    "recipientTimestamp": "1777384072"
+                  },
+                  "deviceListMetadataVersion": 2,
+                  "messageSecret": "n05L7pnUbHggAdmHqwHHC2AAYg3sNXSy8hS82X1fZyE="
+                }
+              },
+              "status": 3
+            }
+          },
+          "engine": "NOWEB",
+          "environment": {
+            "version": "2026.4.2",
+            "engine": "NOWEB",
+            "tier": "CORE",
+            "browser": null,
+            "platform": "linux/x64",
+            "worker": {
+              "id": null
+            }
+          }
+        },
+        "pairedItem": {
+          "item": 0,
+          "input": 1
+        }
+      }
+    ]
+  },
   "connections": {
-    "Webhook WAHA": {
-      "main": [[{ "node": "Parsear mensagem", "type": "main", "index": 0 }]]
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Parsear mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parsear mensagem": {
-      "main": [[
-        { "node": "Buscar conversa", "type": "main", "index": 0 },
-        { "node": "Buscar paciente", "type": "main", "index": 0 },
-        { "node": "Buscar slots",    "type": "main", "index": 0 }
-      ]]
+      "main": [
+        [
+          {
+            "node": "Buscar conversa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar paciente",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Buscar conversa": {
-      "main": [[{ "node": "Montar contexto Claude", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Montar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Buscar paciente": {
-      "main": [[{ "node": "Montar contexto Claude", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Montar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Buscar slots": {
-      "main": [[{ "node": "Montar contexto Claude", "type": "main", "index": 0 }]]
-    },
-    "Montar contexto Claude": {
-      "main": [[{ "node": "Claude API", "type": "main", "index": 0 }]]
-    },
-    "Claude API": {
-      "main": [[{ "node": "Parsear Claude", "type": "main", "index": 0 }]]
-    },
-    "Parsear Claude": {
-      "main": [[{ "node": "Roteador", "type": "main", "index": 0 }]]
-    },
-    "Roteador": {
       "main": [
-        [{ "node": "Prep Agendamento", "type": "main", "index": 0 }],
-        [{ "node": "IF Confirmar",     "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Montar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "IF Confirmar": {
+    "Montar contexto": {
       "main": [
-        [{ "node": "Prep Confirmação", "type": "main", "index": 0 }],
-        [{ "node": "IF Cancelar",      "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Processar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "IF Cancelar": {
+    "Processar estado": {
       "main": [
-        [{ "node": "Prep Cancelamento", "type": "main", "index": 0 }],
-        [{ "node": "Prep Conversa",     "type": "main", "index": 0 }]
+        [
+          {
+            "node": "IF Agendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "Prep Agendamento": {
-      "main": [[{ "node": "Upsert Paciente", "type": "main", "index": 0 }]]
+    "IF Agendar": {
+      "main": [
+        [
+          {
+            "node": "Upsert Paciente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prep reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Upsert Paciente": {
-      "main": [[{ "node": "Criar Appointment", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Criar Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Criar Appointment": {
-      "main": [[{ "node": "Bloquear Slot", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Bloquear Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Bloquear Slot": {
-      "main": [[{ "node": "Prep Conversa", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Prep pos agendamento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Prep Confirmação": {
-      "main": [[{ "node": "Confirmar Appointment", "type": "main", "index": 0 }]]
+    "Prep pos agendamento": {
+      "main": [
+        [
+          {
+            "node": "Upsert Conversa (booking)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Confirmar Appointment": {
-      "main": [[{ "node": "Prep Conversa", "type": "main", "index": 0 }]]
+    "Upsert Conversa (booking)": {
+      "main": [
+        [
+          {
+            "node": "Enviar WAHA (booking)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Prep Cancelamento": {
-      "main": [[{ "node": "Buscar Appointment Ativo", "type": "main", "index": 0 }]]
+    "Prep reply": {
+      "main": [
+        [
+          {
+            "node": "Upsert Conversa (reply)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Buscar Appointment Ativo": {
-      "main": [[{ "node": "Cancelar Appointment", "type": "main", "index": 0 }]]
-    },
-    "Cancelar Appointment": {
-      "main": [[{ "node": "Liberar Slot", "type": "main", "index": 0 }]]
-    },
-    "Liberar Slot": {
-      "main": [[{ "node": "Notificar Lista de Espera", "type": "main", "index": 0 }]]
-    },
-    "Notificar Lista de Espera": {
-      "main": [[{ "node": "Prep Conversa", "type": "main", "index": 0 }]]
-    },
-    "Prep Conversa": {
-      "main": [[{ "node": "Atualizar Conversa", "type": "main", "index": 0 }]]
-    },
-    "Atualizar Conversa": {
-      "main": [[{ "node": "Enviar WAHA", "type": "main", "index": 0 }]]
-    },
-    "Enviar WAHA": {
-      "main": [[{ "node": "Responder 200", "type": "main", "index": 0 }]]
+    "Upsert Conversa (reply)": {
+      "main": [
+        [
+          {
+            "node": "Enviar WAHA (reply)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "bad2de9b-64e1-49c7-8268-9c957aa0dd14",
+  "versionId": "610a89be-3828-4365-82c6-2a989e66841f",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "aec8f8a2dcc72fb894779bb30d2c9ac98c4fe17b595dbadd040d49fc744c4ba8"
+    "instanceId": "3ad4c56b60c14134e39a97816f64e21e1e10cfc1e1f0c2c71ef48a10399ba54e"
   },
-  "id": "knRIGVdF92pjThDg",
+  "id": "TaqOVDiTXCagiuaR",
   "tags": []
-}
+}git reset HEAD~1
