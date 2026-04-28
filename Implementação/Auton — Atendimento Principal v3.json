@@ -180,24 +180,7 @@
     },
     {
       "parameters": {
-        "operation": "upsert",
-        "tableId": "patients",
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "clinic_id",
-              "fieldValue": "={{ $('Processar estado').item.json.bookingData.clinicId }}"
-            },
-            {
-              "fieldId": "phone",
-              "fieldValue": "={{ $('Processar estado').item.json.phone }}"
-            },
-            {
-              "fieldId": "name",
-              "fieldValue": "={{ $('Processar estado').item.json.patient?.name || 'Paciente' }}"
-            }
-          ]
-        }
+        "operation": "upsert"
       },
       "id": "a340550a-c32c-4662-b72b-db9ddc6eeb47",
       "name": "Upsert Paciente",
@@ -322,32 +305,7 @@
     },
     {
       "parameters": {
-        "operation": "upsert",
-        "tableId": "conversations",
-        "fieldsUi": {
-          "fieldValues": [
-            {
-              "fieldId": "clinic_id",
-              "fieldValue": "={{ $json.clinicId }}"
-            },
-            {
-              "fieldId": "patient_phone",
-              "fieldValue": "={{ $json.phone }}"
-            },
-            {
-              "fieldId": "state",
-              "fieldValue": "={{ $json.newState }}"
-            },
-            {
-              "fieldId": "context",
-              "fieldValue": "={{ JSON.stringify($json.newContext) }}"
-            },
-            {
-              "fieldId": "updated_at",
-              "fieldValue": "={{ new Date().toISOString() }}"
-            }
-          ]
-        }
+        "operation": "upsert"
       },
       "id": "71b90b36-39c8-4bd0-b475-b6ee4240b149",
       "name": "Upsert Conversa (booking)",
@@ -416,8 +374,7 @@
         "chatId": "={{ $json.chatId }}",
         "text": "={{ $json.message }}",
         "linkPreview": false,
-        "requestOptions": {},
-        "session": "={{ $('Prep pos agendamento').item.json.session }}"
+        "requestOptions": {}
       },
       "type": "@devlikeapro/n8n-nodes-waha.WAHA",
       "typeVersion": 202502,
