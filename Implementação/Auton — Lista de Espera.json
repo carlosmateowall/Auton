@@ -192,7 +192,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://waha-production-c02b.up.railway.app/api/sendText",
+        "url": "http://95.216.204.119:3000/api/sendText",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
