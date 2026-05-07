@@ -46,28 +46,46 @@ Quatro quadrados conectados por linhas — representa processos interligados, n�
 
 ## Tipografia
 
-| Hierarquia | Tamanho | Peso | Uso |
-|---|---|---|---|
-| Display / H1 | 28px | 500 | Headlines, capas |
-| H2 / Título | 18px | 500 | Seções, subtítulos |
-| Corpo | 15px | 400 | Texto corrido, descrições |
-| Label / Badge | 11px | 500 | Tags, categorias, letras pequenas |
+**Fonte:** Inter
+**Pesos:** 400 · 500 · 600 · 700
 
-**Fonte recomendada:** Inter ou qualquer sans-serif moderna (ex: DM Sans, Plus Jakarta Sans)
+| Fonte | Tamanho | Peso | Line-height | Letter-spacing | Uso |
+|---|---|---|---|---|---|
+| Inter Bold | 28px | 700 | 1.2 | −0.02em | Headlines, capas, títulos de seção |
+| Inter SemiBold | 18px | 600 | 1.3 | −0.01em | Subtítulos, nome de seção |
+| Inter Regular | 15px | 400 | 1.6 | 0 | Texto corrido, descrições |
+| Inter Medium | 11px | 500 | 1.4 | 0.04em | Tags, categorias, letras pequenas |
+
 
 ---
 
 ## Aplicações
 
+### Convenção de nome por contexto
+
+| Contexto | Nome a usar |
+|---|---|
+| Cartão de visita | **Pedro Henrique** |
+| Assinatura de e-mail | **Pedro Henrique** |
+| LinkedIn (nome de perfil) | **Pedro Henrique Ferreira de Albuquerque** — melhora busca |
+| Proposta comercial — capa | **Pedro Henrique** |
+| Proposta comercial — rodapé / assinatura | **Pedro Henrique Ferreira de Albuquerque** — peso jurídico |
+| WhatsApp / comunicação informal | **Pedro Henrique** |
+
+> Regra prática: use **Pedro Henrique** em tudo que aparece em destaque visual. Reserve o nome completo para contextos onde a formalidade ou a busca por nome justificam.
+
+---
+
 ### Cartão de visita
 - Fundo: `#1C1028`
 - Logo versão escura no topo esquerdo
-- Nome e cargo em branco (`#FFFFFF`)
+- Nome: **Pedro Henrique** em branco (`#FFFFFF`) · peso 700
+- Cargo: *Fundador · Auton* em lilás (`#CECBF6`) · peso 400
 - E-mail em roxo vibrante (`#9B7FE8`)
 
 ### Assinatura de e-mail
 - Ícone isolado em fundo névoa (`#EEEDFE`)
-- Nome + cargo em texto primário
+- Nome: **Pedro Henrique** + cargo em texto primário
 - E-mail e site em texto secundário
 - Divisor sutil entre avatar e contatos
 
@@ -76,8 +94,10 @@ Quatro quadrados conectados por linhas — representa processos interligados, n�
 - Logo versão escura
 - Título da proposta em branco
 - Cliente + data em roxo vibrante (`#9B7FE8`)
+- Assinante no rodapé: **Pedro Henrique Ferreira de Albuquerque**
 
 ### Perfil LinkedIn / redes sociais
+- Nome de perfil: **Pedro Henrique Ferreira de Albuquerque**
 - Banner: fundo `#1C1028`
 - Avatar: ícone isolado em fundo névoa
 - Tags sugeridas: `Automação` · `RPA` · `Inovação`

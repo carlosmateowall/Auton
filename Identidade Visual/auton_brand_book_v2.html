@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auton — Brand Book v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noite: #1C1028;
+  --roxo-principal: #7F77DD;
+  --roxo-vibrante: #9B7FE8;
+  --lilas: #CECBF6;
+  --nevoa: #EEEDFE;
+  --white: #FFFFFF;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--noite);
+  color: var(--lilas);
+  font-family: var(--font-display);
+  display: flex;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  left: 0; top: 0;
+  width: 220px;
+  height: 100vh;
+  border-right: 1px solid rgba(206,203,246,0.08);
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  background: rgba(28,16,40,0.96);
+  backdrop-filter: blur(12px);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 48px;
+}
+.nav-logo svg { width: 28px; height: 28px; }
+.nav-logo-name { font-size: 16px; font-weight: 600; color: var(--white); }
+
+.nav-section-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  color: rgba(206,203,246,0.2);
+  text-transform: uppercase;
+  padding: 0 12px;
+  margin-bottom: 10px;
+}
+
+.nav-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.nav-links a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  font-size: 12px;
+  color: rgba(206,203,246,0.45);
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover { color: var(--lilas); background: rgba(155,127,232,0.08); }
+.nav-links a.active { color: var(--roxo-vibrante); background: rgba(155,127,232,0.1); }
+
+/* ── MAIN ── */
+main { margin-left: 220px; flex: 1; }
+
+section {
+  min-height: 100vh;
+  padding: 88px 88px 88px 72px;
+  border-bottom: 1px solid rgba(206,203,246,0.05);
+  position: relative;
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(206,203,246,0.25);
+  letter-spacing: 0.14em;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-size: 52px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px;
+  color: rgba(206,203,246,0.55);
+  font-weight: 400;
+  margin-bottom: 64px;
+  max-width: 520px;
+  line-height: 1.65;
+}
+
+/* ── COVER ── */
+#cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 700px 500px at 75% 35%, rgba(155,127,232,0.09) 0%, transparent 70%),
+    var(--noite);
+  overflow: hidden;
+}
+.cover-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(206,203,246,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(206,203,246,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.cover-logo { width: 68px; height: 68px; margin-bottom: 44px; }
+.cover-name {
+  font-size: 84px; font-weight: 700; color: var(--white);
+  letter-spacing: -0.025em; line-height: 1; margin-bottom: 20px;
+}
+.cover-blurb { font-size: 22px; color: var(--lilas); margin-bottom: 14px; }
+.cover-tag {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--roxo-vibrante); letter-spacing: 0.18em; text-transform: uppercase;
+}
+.cover-meta {
+  position: absolute; bottom: 48px; right: 88px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: rgba(206,203,246,0.2); letter-spacing: 0.06em; text-align: right;
+}
+
+/* ── DNA ── */
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.dna-card {
+  background: rgba(206,203,246,0.03);
+  border: 1px solid rgba(206,203,246,0.08);
+  border-radius: 12px;
+  padding: 28px;
+  transition: border-color 0.2s;
+}
+.dna-card:hover { border-color: rgba(155,127,232,0.28); }
+.dna-num {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--roxo-vibrante); letter-spacing: 0.1em; margin-bottom: 10px;
+}
+.dna-label { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+.dna-desc { font-size: 13px; color: rgba(206,203,246,0.5); line-height: 1.65; }
+
+/* ── LOGO ── */
+.logo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.logo-var {
+  border-radius: 12px; padding: 44px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.logo-var.vdark { background: #1C1028; border: 1px solid rgba(206,203,246,0.08); }
+.logo-var.vlight { background: #EEEDFE; }
+.logo-var.vwhite { background: #FFFFFF; }
+.logo-var.vicon {
+  background: #1C1028; border: 1px solid rgba(206,203,246,0.08);
+  align-items: center; justify-content: center;
+}
+.logo-inline { display: flex; align-items: center; gap: 14px; }
+.logo-wordmark { font-size: 28px; font-weight: 600; letter-spacing: 0.01em; }
+.logo-wordmark.dark { color: #fff; }
+.logo-wordmark.light { color: #1C1028; }
+.logo-varlabel { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; }
+.logo-varlabel.dark { color: rgba(206,203,246,0.3); }
+.logo-varlabel.light { color: rgba(28,16,40,0.35); }
+
+.logo-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.logo-rule {
+  background: rgba(206,203,246,0.03);
+  border: 1px solid rgba(206,203,246,0.07);
+  border-radius: 10px; padding: 20px;
+}
+.rule-lbl {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--roxo-vibrante); letter-spacing: 0.12em; margin-bottom: 8px;
+}
+.rule-txt { font-size: 13px; color: rgba(206,203,246,0.55); line-height: 1.55; }
+
+/* ── CORES ── */
+.palette { display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px; }
+.palette-row { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: center; }
+.swatch { height: 72px; border-radius: 10px; }
+.color-name { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.color-hex { font-family: var(--font-mono); font-size: 13px; color: var(--roxo-vibrante); margin-bottom: 3px; }
+.color-use { font-size: 13px; color: rgba(206,203,246,0.45); }
+
+.combos { display: flex; gap: 14px; }
+.combo { flex: 1; border-radius: 10px; padding: 22px; }
+
+/* ── TIPOGRAFIA ── */
+.type-family {
+  margin-bottom: 44px; padding-bottom: 44px;
+  border-bottom: 1px solid rgba(206,203,246,0.07);
+}
+.type-family:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.type-lbl {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--roxo-vibrante); letter-spacing: 0.14em; margin-bottom: 28px;
+}
+.type-scale { display: flex; flex-direction: column; gap: 20px; }
+.type-row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: baseline; }
+.type-meta { font-family: var(--font-mono); font-size: 10px; color: rgba(206,203,246,0.25); line-height: 1.5; }
+.type-sample { color: var(--white); line-height: 1.2; }
+
+/* ── APLICAÇÕES ── */
+.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.app-card { border: 1px solid rgba(206,203,246,0.08); border-radius: 12px; overflow: hidden; }
+.app-card.full { grid-column: 1 / -1; }
+.app-label {
+  padding: 12px 20px;
+  background: rgba(206,203,246,0.03);
+  font-family: var(--font-mono); font-size: 10px;
+  color: rgba(206,203,246,0.3); letter-spacing: 0.12em;
+  border-bottom: 1px solid rgba(206,203,246,0.06);
+}
+.app-body { padding: 32px; }
+
+.bcard {
+  background: #1C1028; border-radius: 10px;
+  padding: 28px; width: 100%;
+  aspect-ratio: 1.75;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border: 1px solid rgba(206,203,246,0.07);
+}
+.bc-top { display: flex; align-items: center; gap: 10px; }
+.bc-name { font-size: 15px; font-weight: 600; color: #fff; }
+.bc-role { font-size: 11px; color: rgba(206,203,246,0.45); }
+.bc-contact { display: flex; flex-direction: column; gap: 3px; }
+.bc-item { font-family: var(--font-mono); font-size: 10px; color: var(--roxo-vibrante); }
+
+/* ── VOZ ── */
+.voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 40px; }
+.voice-card { border-radius: 12px; padding: 26px; border: 1px solid rgba(206,203,246,0.08); }
+.voice-card.sim { border-color: rgba(155,127,232,0.28); background: rgba(155,127,232,0.05); }
+.voice-lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; margin-bottom: 14px; }
+.voice-lbl.sim { color: var(--roxo-vibrante); }
+.voice-lbl.nao { color: rgba(206,203,246,0.25); }
+.voice-quote { font-size: 14px; color: rgba(206,203,246,0.7); line-height: 1.7; font-style: italic; }
+
+.voice-principles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.vp {
+  padding: 22px;
+  background: rgba(206,203,246,0.03);
+  border: 1px solid rgba(206,203,246,0.07);
+  border-radius: 10px;
+}
+
+/* ── SCROLL DOTS ── */
+.scroll-dots {
+  position: fixed; right: 28px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 50;
+}
+.sdot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(206,203,246,0.15);
+  cursor: pointer; transition: all 0.25s;
+}
+.sdot.active { background: var(--roxo-vibrante); height: 16px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="14" x2="42" y2="14" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="14" y1="22" x2="14" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="50" y1="22" x2="50" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+      <line x1="22" y1="50" x2="42" y2="50" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+      <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+      <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+      <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+      <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+    </svg>
+    <span class="nav-logo-name">Auton</span>
+  </div>
+  <span class="nav-section-label">Brand Book</span>
+  <ul class="nav-links">
+    <li><a href="#cover" class="active">01 · Capa</a></li>
+    <li><a href="#dna">02 · DNA da Marca</a></li>
+    <li><a href="#logo">03 · Logotipo</a></li>
+    <li><a href="#cores">04 · Cores</a></li>
+    <li><a href="#tipografia">05 · Tipografia</a></li>
+    <li><a href="#aplicacoes">06 · Aplicações</a></li>
+    <li><a href="#voz">07 · Tom de Voz</a></li>
+  </ul>
+</nav>
+
+<!-- ── DOTS ── -->
+<div class="scroll-dots">
+  <div class="sdot active" data-s="cover"></div>
+  <div class="sdot" data-s="dna"></div>
+  <div class="sdot" data-s="logo"></div>
+  <div class="sdot" data-s="cores"></div>
+  <div class="sdot" data-s="tipografia"></div>
+  <div class="sdot" data-s="aplicacoes"></div>
+  <div class="sdot" data-s="voz"></div>
+</div>
+
+<main>
+
+<!-- 01 COVER -->
+<section id="cover">
+  <div class="cover-grid"></div>
+  <svg class="cover-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <line x1="22" y1="14" x2="42" y2="14" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+    <line x1="14" y1="22" x2="14" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+    <line x1="50" y1="22" x2="50" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+    <line x1="22" y1="50" x2="42" y2="50" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+    <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+    <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+    <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+    <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+  </svg>
+  <div class="cover-name">Auton</div>
+  <div class="cover-blurb">Seu processo no piloto automático.</div>
+  <div class="cover-tag">Process &amp; Flow · Brand Guidelines</div>
+  <div class="cover-meta">Versão 2.0<br>Maio 2026</div>
+</section>
+
+<!-- 02 DNA -->
+<section id="dna">
+  <div class="section-number">02 — DNA DA MARCA</div>
+  <h2 class="section-title">Quem é a Auton</h2>
+  <p class="section-sub">Os valores e traços de personalidade que definem como a marca se expressa em todos os pontos de contato.</p>
+
+  <div class="dna-grid">
+    <div class="dna-card">
+      <div class="dna-num">01</div>
+      <div class="dna-label">Tecnológica</div>
+      <div class="dna-desc">Fala a língua dos processos, sistemas e dados. Não tem medo de ser técnica quando precisa.</div>
+    </div>
+    <div class="dna-card">
+      <div class="dna-num">02</div>
+      <div class="dna-label">Confiável</div>
+      <div class="dna-desc">Cumpre o que promete. A operação do cliente depende da Auton — e a Auton sabe disso.</div>
+    </div>
+    <div class="dna-card">
+      <div class="dna-num">03</div>
+      <div class="dna-label">Futurista</div>
+      <div class="dna-desc">Pensa dois passos à frente. A automação de hoje é o padrão de amanhã.</div>
+    </div>
+    <div class="dna-card">
+      <div class="dna-num">04</div>
+      <div class="dna-label">Inovadora</div>
+      <div class="dna-desc">Resolve problemas de formas que o cliente ainda não imaginou. IA como ferramenta, não como buzzword.</div>
+    </div>
+    <div class="dna-card">
+      <div class="dna-num">05</div>
+      <div class="dna-label">Sólida</div>
+      <div class="dna-desc">Estabilidade visual e operacional. A marca transmite segurança antes de qualquer palavra.</div>
+    </div>
+    <div class="dna-card" style="background:rgba(155,127,232,0.07);border-color:rgba(155,127,232,0.2);">
+      <div class="dna-num" style="color:var(--lilas);">∞</div>
+      <div class="dna-label">Missão</div>
+      <div class="dna-desc" style="color:rgba(206,203,246,0.7);">Colocar o processo da sua empresa no piloto automático — reduzindo trabalho manual, acelerando atendimento e dando visibilidade total da operação.</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(206,203,246,0.03);border:1px solid rgba(206,203,246,0.07);border-radius:12px;padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:48px;">
+    <div>
+      <div class="rule-lbl" style="margin-bottom:10px;">PÚBLICO-ALVO</div>
+      <div style="font-size:15px;color:var(--white);line-height:1.65;">Pequenas, médias e grandes empresas que ainda dependem de processos manuais e querem ganhar escala sem contratar mais gente.</div>
+    </div>
+    <div>
+      <div class="rule-lbl" style="margin-bottom:10px;">SETOR</div>
+      <div style="font-size:15px;color:var(--white);line-height:1.65;">Automações em geral — atendimento, operações, dados, integrações, RPA e workflows com IA.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 LOGO -->
+<section id="logo">
+  <div class="section-number">03 — LOGOTIPO</div>
+  <h2 class="section-title">Símbolo</h2>
+  <p class="section-sub">Quatro nós conectados por linhas — processos interligados, automação em fluxo. Os quadrados diagonais sólidos indicam estado ativo; os translúcidos, potencial.</p>
+
+  <div class="logo-grid">
+    <!-- Dark main -->
+    <div class="logo-var vdark">
+      <div class="logo-inline">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="22" y1="14" x2="42" y2="14" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="22" x2="14" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="22" x2="50" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="50" x2="42" y2="50" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+          <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+          <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+          <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+          <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+        </svg>
+        <span class="logo-wordmark dark">Auton</span>
+      </div>
+      <span class="logo-varlabel dark">VERSÃO ESCURA · USO PRINCIPAL</span>
+    </div>
+
+    <!-- Light -->
+    <div class="logo-var vlight">
+      <div class="logo-inline">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="22" y1="14" x2="42" y2="14" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="22" x2="14" y2="42" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="22" x2="50" y2="42" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="50" x2="42" y2="50" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+          <rect x="6" y="6" width="16" height="16" rx="2" fill="#7F77DD"/>
+          <rect x="42" y="6" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.25"/>
+          <rect x="6" y="42" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.25"/>
+          <rect x="42" y="42" width="16" height="16" rx="2" fill="#7F77DD"/>
+        </svg>
+        <span class="logo-wordmark light">Auton</span>
+      </div>
+      <span class="logo-varlabel light">VERSÃO NÉVOA · DOCUMENTOS / SLIDES</span>
+    </div>
+
+    <!-- White -->
+    <div class="logo-var vwhite">
+      <div class="logo-inline">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="22" y1="14" x2="42" y2="14" stroke="#1C1028" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="22" x2="14" y2="42" stroke="#1C1028" stroke-width="2" stroke-linecap="round"/>
+          <line x1="50" y1="22" x2="50" y2="42" stroke="#1C1028" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="50" x2="42" y2="50" stroke="#1C1028" stroke-width="2" stroke-linecap="round"/>
+          <rect x="6" y="6" width="16" height="16" rx="2" fill="#7F77DD"/>
+          <rect x="42" y="6" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.3"/>
+          <rect x="6" y="42" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.3"/>
+          <rect x="42" y="42" width="16" height="16" rx="2" fill="#7F77DD"/>
+        </svg>
+        <span class="logo-wordmark light">Auton</span>
+      </div>
+      <span class="logo-varlabel light">VERSÃO BRANCA · E-MAIL / PDF FORMAL</span>
+    </div>
+
+    <!-- Icon -->
+    <div class="logo-var vicon">
+      <svg width="60" height="60" viewBox="0 0 64 64">
+        <line x1="22" y1="14" x2="42" y2="14" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+        <line x1="14" y1="22" x2="14" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+        <line x1="50" y1="22" x2="50" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+        <line x1="22" y1="50" x2="42" y2="50" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+        <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+        <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+        <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+        <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+      </svg>
+      <span class="logo-varlabel dark" style="margin-top:8px;">ÍCONE ISOLADO · FAVICON / PERFIL / APP</span>
+    </div>
+  </div>
+
+  <div class="logo-rules">
+    <div class="logo-rule">
+      <div class="rule-lbl">ESPAÇO MÍNIMO</div>
+      <div class="rule-txt">Manter sempre um espaço livre equivalente à largura de um dos quadrados do ícone em todos os lados.</div>
+    </div>
+    <div class="logo-rule">
+      <div class="rule-lbl">TAMANHO MÍNIMO</div>
+      <div class="rule-txt">Ícone isolado: mínimo 16×16px. Logo completo (ícone + texto): não usar abaixo de 120px de largura.</div>
+    </div>
+    <div class="logo-rule">
+      <div class="rule-lbl">O QUE NÃO FAZER</div>
+      <div class="rule-txt">Não distorcer, não alterar as cores fora das variações aprovadas, não adicionar sombra, não usar sobre fundos de baixo contraste.</div>
+    </div>
+    <div class="logo-rule">
+      <div class="rule-lbl">CONCEITO</div>
+      <div class="rule-txt">Quatro nós = quatro etapas de processo. As linhas são os fluxos. Diagonal sólida/translúcida cria movimento sem complexidade.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 CORES -->
+<section id="cores">
+  <div class="section-number">04 — PALETA DE CORES</div>
+  <h2 class="section-title">Identidade<br>Cromática</h2>
+  <p class="section-sub">Cinco cores constroem todo o universo visual da Auton. Noite é a base. Roxo é a energia. Névoa é o respiro.</p>
+
+  <div class="palette">
+    <div class="palette-row">
+      <div class="swatch" style="background:#1C1028;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);"></div>
+      <div>
+        <div class="color-name">Noite</div>
+        <div class="color-hex">#1C1028</div>
+        <div class="color-use">Fundo principal · Fundo do logotipo · Base de todas as composições</div>
+      </div>
+    </div>
+    <div class="palette-row">
+      <div class="swatch" style="background:#9B7FE8;"></div>
+      <div>
+        <div class="color-name">Roxo Vibrante</div>
+        <div class="color-hex">#9B7FE8</div>
+        <div class="color-use">Ícone do logo · CTAs · Destaques · Links · Acento principal</div>
+      </div>
+    </div>
+    <div class="palette-row">
+      <div class="swatch" style="background:#7F77DD;"></div>
+      <div>
+        <div class="color-name">Roxo Principal</div>
+        <div class="color-hex">#7F77DD</div>
+        <div class="color-use">Logo versão clara · Bordas · Elementos secundários sobre fundos escuros</div>
+      </div>
+    </div>
+    <div class="palette-row">
+      <div class="swatch" style="background:#CECBF6;"></div>
+      <div>
+        <div class="color-name">Lilás</div>
+        <div class="color-hex">#CECBF6</div>
+        <div class="color-use">Texto sobre fundo escuro · Labels · Linhas do logo · Corpo de texto principal</div>
+      </div>
+    </div>
+    <div class="palette-row">
+      <div class="swatch" style="background:#EEEDFE;box-shadow:inset 0 0 0 1px rgba(28,16,40,0.08);"></div>
+      <div>
+        <div class="color-name">Névoa</div>
+        <div class="color-hex">#EEEDFE</div>
+        <div class="color-use">Fundos claros · Badges · Tags · Fundo de ícone isolado · Versão clara do logo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule-lbl" style="margin-bottom:14px;">COMBINAÇÕES APROVADAS</div>
+  <div class="combos">
+    <div class="combo" style="background:#1C1028;border:1px solid rgba(206,203,246,0.08);">
+      <div style="font-family:var(--font-mono);font-size:10px;color:rgba(206,203,246,0.25);margin-bottom:10px;">PRINCIPAL</div>
+      <div style="color:#CECBF6;font-size:15px;">Texto em lilás</div>
+      <div style="color:#9B7FE8;font-size:13px;margin-top:4px;">Acento em roxo vibrante</div>
+    </div>
+    <div class="combo" style="background:#EEEDFE;">
+      <div style="font-family:var(--font-mono);font-size:10px;color:rgba(28,16,40,0.3);margin-bottom:10px;">CLARA</div>
+      <div style="color:#1C1028;font-size:15px;">Texto em noite</div>
+      <div style="color:#7F77DD;font-size:13px;margin-top:4px;">Acento em roxo principal</div>
+    </div>
+    <div class="combo" style="background:#9B7FE8;">
+      <div style="font-family:var(--font-mono);font-size:10px;color:rgba(28,16,40,0.4);margin-bottom:10px;">CTA / BADGE</div>
+      <div style="color:#1C1028;font-size:15px;font-weight:600;">Botão / Destaque</div>
+      <div style="color:rgba(28,16,40,0.55);font-size:13px;margin-top:4px;">Texto escuro sobre roxo</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 TIPOGRAFIA -->
+<section id="tipografia">
+  <div class="section-number">05 — TIPOGRAFIA</div>
+  <h2 class="section-title">Letras que<br>trabalham</h2>
+  <p class="section-sub">Duas famílias. Bricolage Grotesque para expressão humana. IBM Plex Mono para precisão técnica.</p>
+
+  <div class="type-family">
+    <div class="type-lbl">BRICOLAGE GROTESQUE · DISPLAY + CORPO</div>
+    <div class="type-scale">
+      <div class="type-row">
+        <div class="type-meta">Display / H1<br>28px · 500</div>
+        <div class="type-sample" style="font-size:28px;font-weight:500;">Automatize seu processo</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">H2 / Título<br>18px · 500</div>
+        <div class="type-sample" style="font-size:18px;font-weight:500;">Diagnóstico gratuito em 30 minutos</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">Corpo<br>15px · 400</div>
+        <div class="type-sample" style="font-size:15px;font-weight:400;color:rgba(206,203,246,0.65);">Reduzimos o trabalho manual da sua equipe, aceleramos o atendimento e damos visibilidade total da operação.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">Small<br>13px · 400</div>
+        <div class="type-sample" style="font-size:13px;font-weight:400;color:rgba(206,203,246,0.45);">Automação sob medida para o seu processo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="type-family">
+    <div class="type-lbl">IBM PLEX MONO · DADOS + LABELS TÉCNICOS</div>
+    <div class="type-scale">
+      <div class="type-row">
+        <div class="type-meta">Label<br>11px · 500<br>uppercase</div>
+        <div class="type-sample" style="font-size:11px;font-weight:500;font-family:var(--font-mono);letter-spacing:0.14em;color:var(--roxo-vibrante);text-transform:uppercase;">PROCESSO ATIVO · STATUS OK</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">Contato<br>13px · 400</div>
+        <div class="type-sample" style="font-size:13px;font-family:var(--font-mono);color:rgba(206,203,246,0.65);">autoncy@gmail.com · +55 61 98236-5437</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">Badge / Tag<br>11px · 500</div>
+        <div class="type-sample" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-family:var(--font-mono);font-size:11px;background:rgba(155,127,232,0.12);color:var(--roxo-vibrante);padding:5px 12px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">Automação</span>
+          <span style="font-family:var(--font-mono);font-size:11px;background:rgba(155,127,232,0.12);color:var(--roxo-vibrante);padding:5px 12px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">RPA</span>
+          <span style="font-family:var(--font-mono);font-size:11px;background:rgba(155,127,232,0.12);color:var(--roxo-vibrante);padding:5px 12px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">IA</span>
+          <span style="font-family:var(--font-mono);font-size:11px;background:rgba(155,127,232,0.12);color:var(--roxo-vibrante);padding:5px 12px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">Inovação</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 APLICAÇÕES -->
+<section id="aplicacoes">
+  <div class="section-number">06 — APLICAÇÕES</div>
+  <h2 class="section-title">A marca<br>em uso</h2>
+  <p class="section-sub">Como a Auton aparece nos pontos de contato com clientes e parceiros.</p>
+
+  <div class="app-grid">
+    <!-- Cartão -->
+    <div class="app-card">
+      <div class="app-label">CARTÃO DE VISITA</div>
+      <div class="app-body">
+        <div class="bcard">
+          <div class="bc-top">
+            <svg width="22" height="22" viewBox="0 0 64 64">
+              <line x1="22" y1="14" x2="42" y2="14" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+              <line x1="14" y1="22" x2="14" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+              <line x1="50" y1="22" x2="50" y2="42" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+              <line x1="22" y1="50" x2="42" y2="50" stroke="#CECBF6" stroke-width="2" stroke-linecap="round"/>
+              <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+              <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+              <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+              <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+            </svg>
+            <div>
+              <div class="bc-name">Pedro Henrique</div>
+              <div class="bc-role">Fundador · Especialista em Automação</div>
+            </div>
+          </div>
+          <div class="bc-contact">
+            <div class="bc-item">autoncy@gmail.com</div>
+            <div class="bc-item">+55 61 98236-5437</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assinatura -->
+    <div class="app-card">
+      <div class="app-label">ASSINATURA DE E-MAIL</div>
+      <div class="app-body">
+        <div style="background:#fff;border-radius:10px;padding:22px;display:flex;gap:16px;align-items:flex-start;">
+          <div style="width:44px;height:44px;background:#EEEDFE;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="26" height="26" viewBox="0 0 64 64">
+              <line x1="22" y1="14" x2="42" y2="14" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+              <line x1="14" y1="22" x2="14" y2="42" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+              <line x1="50" y1="22" x2="50" y2="42" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+              <line x1="22" y1="50" x2="42" y2="50" stroke="#7F77DD" stroke-width="2" stroke-linecap="round"/>
+              <rect x="6" y="6" width="16" height="16" rx="2" fill="#7F77DD"/>
+              <rect x="42" y="6" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.25"/>
+              <rect x="6" y="42" width="16" height="16" rx="2" fill="#7F77DD" fill-opacity="0.25"/>
+              <rect x="42" y="42" width="16" height="16" rx="2" fill="#7F77DD"/>
+            </svg>
+          </div>
+          <div style="border-left:2px solid #EEEDFE;padding-left:16px;">
+            <div style="font-size:14px;font-weight:600;color:#1C1028;font-family:'Bricolage Grotesque',sans-serif;">Pedro Henrique</div>
+            <div style="font-size:12px;color:#666;margin-bottom:8px;font-family:'Bricolage Grotesque',sans-serif;">Fundador · Auton</div>
+            <div style="font-size:11px;color:#7F77DD;font-family:'IBM Plex Mono',monospace;">autoncy@gmail.com</div>
+            <div style="font-size:11px;color:#7F77DD;font-family:'IBM Plex Mono',monospace;">+55 61 98236-5437</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="app-card full">
+      <div class="app-label">BANNER LINKEDIN / REDES SOCIAIS</div>
+      <div class="app-body">
+        <div style="background:#1C1028;border-radius:10px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;min-height:110px;position:relative;overflow:hidden;border:1px solid rgba(206,203,246,0.07);">
+          <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(206,203,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(206,203,246,0.025) 1px,transparent 1px);background-size:32px 32px;"></div>
+          <div style="position:absolute;right:-40px;top:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(155,127,232,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+          <div style="position:relative;">
+            <div style="font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.01em;font-family:'Bricolage Grotesque',sans-serif;">Auton</div>
+            <div style="font-size:13px;color:rgba(206,203,246,0.55);margin-top:4px;font-family:'Bricolage Grotesque',sans-serif;">Seu processo no piloto automático.</div>
+          </div>
+          <div style="display:flex;gap:8px;position:relative;flex-wrap:wrap;">
+            <span style="font-family:'IBM Plex Mono';font-size:11px;background:rgba(155,127,232,0.14);color:#9B7FE8;padding:6px 14px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">Automação</span>
+            <span style="font-family:'IBM Plex Mono';font-size:11px;background:rgba(155,127,232,0.14);color:#9B7FE8;padding:6px 14px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">RPA</span>
+            <span style="font-family:'IBM Plex Mono';font-size:11px;background:rgba(155,127,232,0.14);color:#9B7FE8;padding:6px 14px;border-radius:20px;border:1px solid rgba(155,127,232,0.28);">IA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 VOZ -->
+<section id="voz">
+  <div class="section-number">07 — TOM DE VOZ</div>
+  <h2 class="section-title">Como a Auton<br>fala</h2>
+  <p class="section-sub">Direta, confiante e focada no resultado do cliente — não no processo pelo processo. Técnica sem ser fria.</p>
+
+  <div class="voice-grid">
+    <div class="voice-card sim">
+      <div class="voice-lbl sim">✓ AUTON FALA ASSIM</div>
+      <div class="voice-quote">«Vamos mapear seu processo hoje e ter a automação rodando essa semana.»</div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-lbl nao">✗ AUTON NÃO FALA ASSIM</div>
+      <div class="voice-quote">«Prezado cliente, conforme nossa proposta de sinergia de soluções inovadoras...»</div>
+    </div>
+    <div class="voice-card sim">
+      <div class="voice-lbl sim">✓ AUTON FALA ASSIM</div>
+      <div class="voice-quote">«Seu atendimento está demorando 2 dias? Dá pra trazer pra 2 horas.»</div>
+    </div>
+    <div class="voice-card">
+      <div class="voice-lbl nao">✗ AUTON NÃO FALA ASSIM</div>
+      <div class="voice-quote">«Utilizamos tecnologias de ponta para transformar digitalmente seus fluxos de trabalho.»</div>
+    </div>
+  </div>
+
+  <div class="voice-principles">
+    <div class="vp">
+      <div class="rule-lbl">DIRETA</div>
+      <div class="rule-txt">Diz o que precisa ser dito, sem rodeios. O tempo do cliente vale tanto quanto o nosso.</div>
+    </div>
+    <div class="vp">
+      <div class="rule-lbl">TÉCNICA SEM SER FRIA</div>
+      <div class="rule-txt">Fala de APIs, fluxos e integrações — mas sempre conecta ao benefício humano por trás.</div>
+    </div>
+    <div class="vp">
+      <div class="rule-lbl">RESULTADO PRIMEIRO</div>
+      <div class="rule-txt">Foca no que muda para o cliente, não em como a automação foi feita.</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top:80px;padding-top:40px;border-top:1px solid rgba(206,203,246,0.06);display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="18" height="18" viewBox="0 0 64 64">
+        <rect x="6" y="6" width="16" height="16" rx="2" fill="#9B7FE8"/>
+        <rect x="42" y="6" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+        <rect x="6" y="42" width="16" height="16" rx="2" fill="#9B7FE8" fill-opacity="0.25"/>
+        <rect x="42" y="42" width="16" height="16" rx="2" fill="#9B7FE8"/>
+      </svg>
+      <span style="font-family:var(--font-mono);font-size:11px;color:rgba(206,203,246,0.25);">Auton · Brand Guidelines v2.0 · Maio 2026</span>
+    </div>
+    <span style="font-family:var(--font-mono);font-size:10px;color:rgba(206,203,246,0.15);">Uso interno · Não distribua</span>
+  </div>
+</section>
+
+</main>
+
+<script>
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.nav-links a');
+const dots = document.querySelectorAll('.sdot');
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const id = e.target.id;
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    dots.forEach(d => d.classList.toggle('active', d.dataset.s === id));
+  });
+}, { threshold: 0.35 });
+
+sections.forEach(s => io.observe(s));
+dots.forEach(d => d.addEventListener('click', () =>
+  document.getElementById(d.dataset.s)?.scrollIntoView({ behavior: 'smooth' })
+));
+</script>
+</body>
+</html>
